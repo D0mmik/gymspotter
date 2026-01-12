@@ -12,6 +12,7 @@ import { useLocale } from "@/components/LocaleProvider";
 import { MapPin, Send, CheckCircle, X, AlertCircle } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { posthog } from "@/components/PostHogProvider";
 
 interface AddGymDrawerProps {
   open: boolean;
@@ -47,10 +48,25 @@ export function AddGymDrawer({ open, onOpenChange }: AddGymDrawerProps) {
         note: gymNote.trim() || undefined,
       });
       setStatus("success");
+
+      // Track gym request submitted event
+      posthog.capture("gym_request_submitted", {
+        gym_name: gymName.trim(),
+        gym_address: gymAddress.trim(),
+        has_note: !!gymNote.trim(),
+      });
     } catch (error) {
       console.error("Error creating gym request:", error);
       setErrorMessage(t("errorGeneric"));
       setStatus("error");
+
+      // Track gym request failed event and capture exception
+      posthog.capture("gym_request_failed", {
+        gym_name: gymName.trim(),
+        gym_address: gymAddress.trim(),
+        error_message: error instanceof Error ? error.message : "Unknown error",
+      });
+      posthog.captureException(error);
     }
   };
 
@@ -68,9 +84,9 @@ export function AddGymDrawer({ open, onOpenChange }: AddGymDrawerProps) {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90vh] md:max-h-[80vh]">
-        <div className="mx-auto w-full max-w-lg">
-          <DrawerHeader className="text-center relative">
+      <DrawerContent className="max-h-[85vh] md:max-h-[80vh] flex flex-col">
+        <div className="mx-auto w-full max-w-lg flex flex-col h-full overflow-hidden">
+          <DrawerHeader className="text-center relative flex-shrink-0">
             <button
               onClick={handleClose}
               className="absolute right-0 top-0 p-2 rounded-lg hover:bg-zinc-800 transition-colors"
@@ -92,23 +108,23 @@ export function AddGymDrawer({ open, onOpenChange }: AddGymDrawerProps) {
             </div>
           </DrawerHeader>
 
-          <div className="px-4 pb-8">
-            {status === "success" ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-green-500/20 flex items-center justify-center mb-4">
-                  <CheckCircle className="w-8 h-8 md:w-10 md:h-10 text-green-500" />
-                </div>
-                <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{t("thankYou")}</h3>
-                <p className="text-zinc-400 mb-6">{t("thankYouMessage")}</p>
-                <button
-                  onClick={handleClose}
-                  className="px-6 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-colors text-white font-medium"
-                >
-                  {t("close")}
-                </button>
+          {status === "success" ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center px-4 pb-8">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-green-500/20 flex items-center justify-center mb-4">
+                <CheckCircle className="w-8 h-8 md:w-10 md:h-10 text-green-500" />
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{t("thankYou")}</h3>
+              <p className="text-zinc-400 mb-6">{t("thankYouMessage")}</p>
+              <button
+                onClick={handleClose}
+                className="px-6 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-colors text-white font-medium"
+              >
+                {t("close")}
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+              <div className="flex-1 overflow-y-auto px-4 space-y-4">
                 {status === "error" && errorMessage && (
                   <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/30">
                     <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
@@ -156,7 +172,9 @@ export function AddGymDrawer({ open, onOpenChange }: AddGymDrawerProps) {
                     className="w-full px-4 py-3 md:py-4 rounded-xl bg-zinc-800/50 border border-zinc-700/50 text-white placeholder-zinc-500 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-colors resize-none text-base"
                   />
                 </div>
+              </div>
 
+              <div className="flex-shrink-0 px-4 py-4 bg-zinc-950">
                 <button
                   type="submit"
                   disabled={status === "sending"}
@@ -174,9 +192,9 @@ export function AddGymDrawer({ open, onOpenChange }: AddGymDrawerProps) {
                     </>
                   )}
                 </button>
-              </form>
-            )}
-          </div>
+              </div>
+            </form>
+          )}
         </div>
       </DrawerContent>
     </Drawer>

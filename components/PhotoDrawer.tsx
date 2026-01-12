@@ -14,6 +14,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import Image from "next/image";
+import { posthog } from "@/components/PostHogProvider";
 
 interface PhotoDrawerProps {
   open: boolean;
@@ -113,10 +114,28 @@ export function PhotoDrawer({ open, onOpenChange, gymId, gymName }: PhotoDrawerP
       });
 
       setStatus("success");
+
+      // Track photo uploaded event
+      posthog.capture("photo_uploaded", {
+        gym_id: gymId,
+        gym_name: gymName,
+        file_type: selectedFile.type,
+        file_size_bytes: selectedFile.size,
+      });
     } catch (error) {
       console.error("Error uploading photo:", error);
       setErrorMessage(t("errorUpload"));
       setStatus("error");
+
+      // Track photo upload failed event and capture exception
+      posthog.capture("photo_upload_failed", {
+        gym_id: gymId,
+        gym_name: gymName,
+        error_message: error instanceof Error ? error.message : "Unknown error",
+        file_type: selectedFile?.type,
+        file_size_bytes: selectedFile?.size,
+      });
+      posthog.captureException(error);
     }
   };
 

@@ -5,14 +5,32 @@ import { AddGymDrawer } from "@/components/AddGymDrawer";
 import { MapPin, Dumbbell, Navigation, Plus, Globe } from "lucide-react";
 import { useRef, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
+import { useFeatureFlag, posthog } from "@/components/PostHogProvider";
 
 export default function Home() {
   const mapRef = useRef<GymMapRef>(null);
   const [addGymOpen, setAddGymOpen] = useState(false);
   const { locale, setLocale, t, isReady } = useLocale();
+  const isLocationEnabled = useFeatureFlag("user-location");
 
   const toggleLocale = () => {
-    setLocale(locale === "cs" ? "en" : "cs");
+    const newLocale = locale === "cs" ? "en" : "cs";
+    setLocale(newLocale);
+
+    // Track language switch event
+    posthog.capture("language_switched", {
+      from_locale: locale,
+      to_locale: newLocale,
+    });
+  };
+
+  const handleAddGymOpen = () => {
+    setAddGymOpen(true);
+
+    // Track add gym drawer opened event
+    posthog.capture("add_gym_drawer_opened", {
+      current_locale: locale,
+    });
   };
 
   // Don't render UI text until locale is determined to prevent flash
@@ -71,20 +89,22 @@ export default function Home() {
           style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)" }}
         >
           <button
-            onClick={() => setAddGymOpen(true)}
+            onClick={handleAddGymOpen}
             className="flex items-center gap-2 px-4 py-3 min-h-[48px] rounded-xl bg-red-500/20 border border-red-500/30 hover:bg-red-500/30 active:bg-red-500/40 transition-colors shadow-lg backdrop-blur-sm"
             aria-label={t("addGym")}
           >
             <Plus className="w-5 h-5 text-red-500" />
             <span className="text-sm font-medium text-red-500">{t("addGym")}</span>
           </button>
-          <button
-            onClick={() => mapRef.current?.centerOnLocation()}
-            className="flex items-center justify-center w-12 h-12 rounded-xl bg-red-500/20 border border-red-500/30 hover:bg-red-500/30 active:bg-red-500/40 transition-colors shadow-lg backdrop-blur-sm"
-            aria-label={t("showMyLocation")}
-          >
-            <Navigation className="w-6 h-6 text-red-500" />
-          </button>
+          {isLocationEnabled && (
+            <button
+              onClick={() => mapRef.current?.centerOnLocation()}
+              className="flex items-center justify-center w-12 h-12 rounded-xl bg-red-500/20 border border-red-500/30 hover:bg-red-500/30 active:bg-red-500/40 transition-colors shadow-lg backdrop-blur-sm"
+              aria-label={t("showMyLocation")}
+            >
+              <Navigation className="w-6 h-6 text-red-500" />
+            </button>
+          )}
         </div>
       </div>
 

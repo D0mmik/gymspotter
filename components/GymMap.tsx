@@ -14,10 +14,11 @@ import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { User, Camera, Copy, Globe, Phone } from "lucide-react";
+import { User, Camera, Copy, Globe, Phone, Dumbbell } from "lucide-react";
 import { useLocale } from "@/components/LocaleProvider";
 import { PhotoDrawer } from "@/components/PhotoDrawer";
 import { translations } from "@/lib/i18n";
+import { useFeatureFlag, posthog } from "@/components/PostHogProvider";
 
 const PRAGUE_CENTER = {
   longitude: 14.4378,
@@ -105,6 +106,7 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
   const [photoDrawerOpen, setPhotoDrawerOpen] = useState(false);
   const mapRef = useRef<MapRef>(null);
   const { t, isReady } = useLocale();
+  const isLocationEnabled = useFeatureFlag("user-location");
 
   const gyms = useQuery(api.gyms.getAll);
 
@@ -115,17 +117,85 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
   };
 
   // Copy address to clipboard
-  const copyAddress = async (address: string) => {
+  const copyAddress = async (address: string, gymName: string, gymId: string) => {
     try {
       await navigator.clipboard.writeText(address);
       showNotificationToUser(t("addressCopied"), 2000);
+
+      // Track address copy event
+      posthog.capture("gym_details_address_copied", {
+        gym_id: gymId,
+        gym_name: gymName,
+        address: address,
+      });
     } catch (err) {
       console.error("Failed to copy address:", err);
     }
   };
 
+  // Handle gym marker click
+  const handleGymMarkerClick = (gym: Gym) => {
+    setSelectedGym(gym);
+    setDrawerOpen(true);
+
+    // Track gym marker clicked event
+    posthog.capture("gym_marker_clicked", {
+      gym_id: gym._id,
+      gym_name: gym.name,
+      gym_rating: gym.rating,
+      gym_address: gym.address,
+      has_photos: gym.photos && gym.photos.length > 0,
+      is_open: gym.openingHours ? isGymOpen(gym.openingHours) : null,
+      multisport: gym.multisport,
+    });
+
+    // Fly to the gym location
+    if (mapRef.current) {
+      mapRef.current.flyTo({
+        center: [gym.longitude, gym.latitude],
+        duration: 800,
+      });
+    }
+  };
+
+  // Handle photo submit drawer open
+  const handlePhotoDrawerOpen = () => {
+    setPhotoDrawerOpen(true);
+
+    // Track photo submit drawer opened event
+    if (selectedGym) {
+      posthog.capture("photo_submit_drawer_opened", {
+        gym_id: selectedGym._id,
+        gym_name: selectedGym.name,
+      });
+    }
+  };
+
+  // Handle phone click
+  const handlePhoneClick = (gym: Gym) => {
+    posthog.capture("gym_phone_clicked", {
+      gym_id: gym._id,
+      gym_name: gym.name,
+      phone: gym.phone,
+    });
+  };
+
+  // Handle website click
+  const handleWebsiteClick = (gym: Gym) => {
+    posthog.capture("gym_website_clicked", {
+      gym_id: gym._id,
+      gym_name: gym.name,
+      website: gym.website,
+    });
+  };
+
   useImperativeHandle(ref, () => ({
     centerOnLocation: () => {
+      // Check if location feature is enabled
+      if (!isLocationEnabled) {
+        return;
+      }
+
       if (!navigator.geolocation) {
         showNotificationToUser(t("locationNotSupported"));
         return;
@@ -142,12 +212,17 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
           };
           setUserLocation(location);
           setNotification(null); // Clear loading message
-          
+
+          // Track user location centered event
+          posthog.capture("user_location_centered", {
+            latitude: location.latitude,
+            longitude: location.longitude,
+          });
+
           // Use flyTo to properly interrupt any ongoing movement
           if (mapRef.current) {
             mapRef.current.flyTo({
               center: [location.longitude, location.latitude],
-              zoom: 14,
               duration: 1000,
             });
           }
@@ -219,7 +294,7 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
           mapStyle="mapbox://styles/mapbox/dark-v11"
           attributionControl={false}
         >
-          {userLocation && (
+          {isLocationEnabled && userLocation && (
             <Marker
               longitude={userLocation.longitude}
               latitude={userLocation.latitude}
@@ -243,23 +318,18 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setSelectedGym(gym);
-                  setDrawerOpen(true);
-                  
-                  // Fly to the gym location
-                  if (mapRef.current) {
-                    mapRef.current.flyTo({
-                      center: [gym.longitude, gym.latitude],
-                      zoom: 14,
-                      duration: 800,
-                    });
-                  }
+                  handleGymMarkerClick(gym);
                 }}
-                className="cursor-pointer hover:scale-110 transition-transform"
+                className="cursor-pointer hover:scale-110 transition-transform flex flex-col items-center gap-1"
               >
                 <div
                   className="w-6 h-6 rounded-full bg-red-500 border-2 border-white shadow-lg"
                 />
+                {viewState.zoom >= 13 && (
+                  <span className="text-xs font-medium text-white bg-zinc-900/80 px-2 py-0.5 rounded-md whitespace-nowrap shadow-lg backdrop-blur-sm">
+                    {gym.name}
+                  </span>
+                )}
               </button>
             </Marker>
           ))}
@@ -288,7 +358,7 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
                 </DrawerTitle>
                 <DrawerDescription asChild>
                   <button
-                    onClick={() => copyAddress(selectedGym.address)}
+                    onClick={() => copyAddress(selectedGym.address, selectedGym.name, selectedGym._id)}
                     className="flex items-center justify-center gap-2 text-zinc-400 text-sm md:text-base hover:text-zinc-300 transition-colors cursor-pointer group w-full"
                   >
                     <span>{selectedGym.address}</span>
@@ -342,7 +412,7 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
                         {t("noPhotos")}
                       </p>
                       <button
-                        onClick={() => setPhotoDrawerOpen(true)}
+                        onClick={handlePhotoDrawerOpen}
                         className="text-red-500 hover:text-red-400 active:text-red-300 text-sm md:text-base font-medium transition-colors px-4 py-2 rounded-lg hover:bg-red-500/10"
                       >
                         {t("submitPhoto")}
@@ -416,6 +486,7 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
                     <span className="text-zinc-500 w-16">{t("phone")}</span>
                     <a
                       href={`tel:${selectedGym.phone}`}
+                      onClick={() => handlePhoneClick(selectedGym)}
                       className="text-zinc-300 hover:text-white transition-colors"
                     >
                       {selectedGym.phone}
@@ -429,6 +500,7 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
                         href={selectedGym.website}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => handleWebsiteClick(selectedGym)}
                         className="text-red-500 hover:text-red-400 transition-colors break-all"
                       >
                         {selectedGym.website
