@@ -15,8 +15,8 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { User } from "lucide-react";
+import {AttributionControl} from "react-map-gl/mapbox-legacy";
 
-// Prague coordinates - City center (average of all gyms)
 const PRAGUE_CENTER = {
   longitude: 14.4378,
   latitude: 50.0755,
@@ -25,7 +25,7 @@ const PRAGUE_CENTER = {
 const INITIAL_VIEWSTATE: ViewState = {
   longitude: PRAGUE_CENTER.longitude,
   latitude: PRAGUE_CENTER.latitude,
-  zoom: 11.5, // Good zoom level to see Prague city area
+  zoom: 11.5,
   pitch: 0,
   bearing: 0,
   padding: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -94,9 +94,6 @@ export const GymMap = forwardRef<GymMapRef>((props, ref) => {
       <div className="flex h-screen items-center justify-center bg-zinc-950 text-white">
         <div className="text-center">
           <p className="text-red-500 font-semibold">Mapbox token required</p>
-          <p className="text-zinc-400 mt-2 text-sm">
-            Add NEXT_PUBLIC_MAPBOX_TOKEN to .env.local
-          </p>
         </div>
       </div>
     );
@@ -132,9 +129,6 @@ export const GymMap = forwardRef<GymMapRef>((props, ref) => {
             >
               <div
                 className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 border-2 border-white shadow-lg"
-                style={{
-                  transform: "translate(-50%, -50%)",
-                }}
               >
                 <User className="w-3 h-3 text-white" />
               </div>
@@ -158,9 +152,6 @@ export const GymMap = forwardRef<GymMapRef>((props, ref) => {
               >
                 <div
                   className="w-6 h-6 rounded-full bg-red-500 border-2 border-white shadow-lg"
-                  style={{
-                    transform: "translate(-50%, -50%)",
-                  }}
                 />
               </button>
             </Marker>
