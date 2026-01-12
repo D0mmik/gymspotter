@@ -86,7 +86,7 @@ export function AddGymDrawer({ open, onOpenChange }: AddGymDrawerProps) {
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[85vh] md:max-h-[80vh] flex flex-col">
         <div className="mx-auto w-full max-w-lg flex flex-col h-full overflow-hidden">
-          <DrawerHeader className="text-center relative flex-shrink-0">
+          <DrawerHeader className="text-center relative shrink-0">
             <button
               onClick={handleClose}
               className="absolute right-0 top-0 p-2 rounded-lg hover:bg-zinc-800 transition-colors"
@@ -127,7 +127,7 @@ export function AddGymDrawer({ open, onOpenChange }: AddGymDrawerProps) {
               <div className="flex-1 overflow-y-auto px-4 space-y-4">
                 {status === "error" && errorMessage && (
                   <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/30">
-                    <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                    <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
                     <p className="text-red-400 text-sm">{errorMessage}</p>
                   </div>
                 )}
@@ -174,10 +174,10 @@ export function AddGymDrawer({ open, onOpenChange }: AddGymDrawerProps) {
                 </div>
               </div>
 
-              <div className="flex-shrink-0 px-4 py-4 bg-zinc-950">
+              <div className="shrink-0 px-4 py-4">
                 <button
                   type="submit"
-                  disabled={status === "sending"}
+                  disabled={status === "sending" || !gymName.trim() || !gymAddress.trim()}
                   className="w-full flex items-center justify-center gap-2 px-6 py-4 md:py-5 rounded-xl bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 disabled:cursor-not-allowed transition-colors text-white font-semibold text-base md:text-lg"
                 >
                   {status === "sending" ? (
