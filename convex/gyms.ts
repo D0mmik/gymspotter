@@ -21,6 +21,7 @@ export const create = mutation({
     description: v.string(),
     hours: v.string(),
     phone: v.string(),
+    website: v.optional(v.string()),
     rating: v.number(),
     longitude: v.number(),
     latitude: v.number(),
@@ -39,6 +40,7 @@ export const update = mutation({
     description: v.optional(v.string()),
     hours: v.optional(v.string()),
     phone: v.optional(v.string()),
+    website: v.optional(v.string()),
     rating: v.optional(v.number()),
     longitude: v.optional(v.number()),
     latitude: v.optional(v.number()),
@@ -53,6 +55,7 @@ export const update = mutation({
     if (updates.description !== undefined) updateData.description = updates.description;
     if (updates.hours !== undefined) updateData.hours = updates.hours;
     if (updates.phone !== undefined) updateData.phone = updates.phone;
+    if (updates.website !== undefined) updateData.website = updates.website;
     if (updates.rating !== undefined) updateData.rating = updates.rating;
     if (updates.longitude !== undefined) updateData.longitude = updates.longitude;
     if (updates.latitude !== undefined) updateData.latitude = updates.latitude;

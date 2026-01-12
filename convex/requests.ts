@@ -1,0 +1,77 @@
+import { mutation, query } from "./_generated/server";
+import { v } from "convex/values";
+
+// Create a new gym request
+export const createGymRequest = mutation({
+  args: {
+    name: v.string(),
+    address: v.string(),
+    note: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const requestId = await ctx.db.insert("gymRequests", {
+      name: args.name,
+      address: args.address,
+      note: args.note,
+      status: "pending",
+      createdAt: Date.now(),
+    });
+    return requestId;
+  },
+});
+
+// Create a new photo request
+export const createPhotoRequest = mutation({
+  args: {
+    gymId: v.id("gyms"),
+    gymName: v.string(),
+    storageId: v.id("_storage"),
+  },
+  handler: async (ctx, args) => {
+    const requestId = await ctx.db.insert("photoRequests", {
+      gymId: args.gymId,
+      gymName: args.gymName,
+      storageId: args.storageId,
+      status: "pending",
+      createdAt: Date.now(),
+    });
+    return requestId;
+  },
+});
+
+// Generate upload URL for photos
+export const generateUploadUrl = mutation({
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+// Get all pending gym requests (for admin)
+export const getPendingGymRequests = query({
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("gymRequests")
+      .filter((q) => q.eq(q.field("status"), "pending"))
+      .order("desc")
+      .collect();
+  },
+});
+
+// Get all pending photo requests (for admin)
+export const getPendingPhotoRequests = query({
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("photoRequests")
+      .filter((q) => q.eq(q.field("status"), "pending"))
+      .order("desc")
+      .collect();
+  },
+});
+
+// Get photo URL from storage
+export const getPhotoUrl = query({
+  args: { storageId: v.id("_storage") },
+  handler: async (ctx, args) => {
+    return await ctx.storage.getUrl(args.storageId);
+  },
+});

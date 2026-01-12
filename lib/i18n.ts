@@ -1,0 +1,201 @@
+// i18n translations for Gym Spotter
+
+export type Locale = "cs" | "en";
+
+export const translations = {
+  cs: {
+    // Header
+    appName: "Your Gym Spotter",
+    location: "Praha",
+    
+    // Buttons
+    addGym: "Přidat",
+    showMyLocation: "Moje poloha",
+    
+    // Drawer
+    about: "O fitcentru",
+    phone: "Telefon",
+    website: "Web",
+    hours: "Otevírací doba:",
+    addressCopied: "Adresa zkopírována",
+    
+    // Photos placeholder
+    noPhotos: "Znáte toto místo? Pošlete nám fotku!",
+    submitPhoto: "Odeslat fotku →",
+    
+    // Loading
+    loading: "Načítání fitcenter...",
+    mapboxRequired: "Vyžadován Mapbox token",
+    addMapboxToken: "Přidejte NEXT_PUBLIC_MAPBOX_TOKEN do .env.local",
+    
+    // Language
+    switchLanguage: "EN",
+    
+    // Location
+    locationLoading: "Hledám polohu...",
+    locationDenied: "Poloha zamítnuta. Povol přístup v nastavení.",
+    locationUnavailable: "Poloha není dostupná.",
+    locationTimeout: "Vypršel čas pro získání polohy.",
+    locationNotSupported: "Tvůj prohlížeč nepodporuje geolokaci.",
+    
+    // Add gym form
+    addGymTitle: "Přidat fitcentrum",
+    addGymDescription: "Znáš fitko, které tu chybí? Řekni nám o něm!",
+    gymName: "Název fitcentra",
+    gymNamePlaceholder: "např. Fitness XY",
+    gymAddress: "Adresa",
+    gymAddressPlaceholder: "např. Vinohradská 123, Praha 2",
+    gymNote: "Poznámka (volitelné)",
+    gymNotePlaceholder: "Otevírací doba, typ fitka, co se ti líbí...",
+    send: "Odeslat",
+    sending: "Odesílám...",
+    thankYou: "Děkujeme!",
+    thankYouMessage: "Fitko brzy přidáme.",
+    close: "Zavřít",
+    
+    // Photo form
+    photoTitle: "Odeslat fotku",
+    photoDescription: "Pomoz ostatním vidět, jak to tam vypadá!",
+    selectPhoto: "Vybrat fotku",
+    takePhoto: "Vyfotit",
+    changePhoto: "Změnit fotku",
+    uploadingPhoto: "Nahrávám fotku...",
+    photoSelected: "Fotka vybrána",
+    
+    // Errors
+    errorGeneric: "Něco se pokazilo. Zkus to znovu.",
+    errorFileSize: "Fotka je moc velká. Maximum je 10 MB.",
+    errorFileType: "Neplatný formát. Použij JPG, PNG nebo WebP.",
+    errorUpload: "Nahrávání selhalo. Zkus to znovu.",
+    errorRequired: "Vyplň všechna povinná pole.",
+    
+    // Days of week
+    monday: "Pondělí",
+    tuesday: "Úterý",
+    wednesday: "Středa",
+    thursday: "Čtvrtek",
+    friday: "Pátek",
+    saturday: "Sobota",
+    sunday: "Neděle",
+    closed: "Zavřeno",
+    open: "Otevřeno",
+    openingHours: "Otevírací doba",
+    today: "Dnes",
+    
+    // Multisport
+    multisport: "MultiSport",
+    multisportYes: "Přijímá MultiSport",
+    multisportNo: "Nepřijímá MultiSport",
+  },
+  en: {
+    // Header
+    appName: "Your Gym Spotter",
+    location: "Prague",
+    
+    // Buttons
+    addGym: "Add",
+    showMyLocation: "My location",
+    
+    // Drawer
+    about: "About",
+    phone: "Phone",
+    website: "Website",
+    hours: "Hours:",
+    addressCopied: "Address copied",
+    
+    // Photos placeholder
+    noPhotos: "Know this place? Send us a pic!",
+    submitPhoto: "Submit a photo →",
+    
+    // Loading
+    loading: "Loading gyms...",
+    mapboxRequired: "Mapbox token required",
+    addMapboxToken: "Add NEXT_PUBLIC_MAPBOX_TOKEN to .env.local",
+    
+    // Language
+    switchLanguage: "CZ",
+    
+    // Location
+    locationLoading: "Finding location...",
+    locationDenied: "Location denied. Enable access in settings.",
+    locationUnavailable: "Location unavailable.",
+    locationTimeout: "Location request timed out.",
+    locationNotSupported: "Your browser doesn't support geolocation.",
+    
+    // Add gym form
+    addGymTitle: "Add a gym",
+    addGymDescription: "Know a gym that's missing? Tell us about it!",
+    gymName: "Gym name",
+    gymNamePlaceholder: "e.g. Fitness XY",
+    gymAddress: "Address",
+    gymAddressPlaceholder: "e.g. Vinohradská 123, Prague 2",
+    gymNote: "Note (optional)",
+    gymNotePlaceholder: "Opening hours, gym type, what you like...",
+    send: "Send",
+    sending: "Sending...",
+    thankYou: "Thank you!",
+    thankYouMessage: "We'll add it soon.",
+    close: "Close",
+    
+    // Photo form
+    photoTitle: "Submit a photo",
+    photoDescription: "Help others see what it looks like!",
+    selectPhoto: "Select photo",
+    takePhoto: "Take photo",
+    changePhoto: "Change photo",
+    uploadingPhoto: "Uploading photo...",
+    photoSelected: "Photo selected",
+    
+    // Errors
+    errorGeneric: "Something went wrong. Please try again.",
+    errorFileSize: "Photo is too large. Maximum is 10 MB.",
+    errorFileType: "Invalid format. Use JPG, PNG or WebP.",
+    errorUpload: "Upload failed. Please try again.",
+    errorRequired: "Please fill in all required fields.",
+    
+    // Days of week
+    monday: "Monday",
+    tuesday: "Tuesday",
+    wednesday: "Wednesday",
+    thursday: "Thursday",
+    friday: "Friday",
+    saturday: "Saturday",
+    sunday: "Sunday",
+    closed: "Closed",
+    open: "Open",
+    openingHours: "Opening Hours",
+    today: "Today",
+    
+    // Multisport
+    multisport: "MultiSport",
+    multisportYes: "Accepts MultiSport",
+    multisportNo: "No MultiSport",
+  },
+} as const;
+
+export type TranslationKey = keyof typeof translations.cs;
+
+export function getTranslation(locale: Locale, key: TranslationKey): string {
+  return translations[locale][key];
+}
+
+export function getDefaultLocale(): Locale {
+  if (typeof window === "undefined") return "cs";
+  
+  // Check localStorage first
+  const stored = localStorage.getItem("locale");
+  if (stored === "cs" || stored === "en") return stored;
+  
+  // Check browser language - only switch to English if explicitly English
+  const browserLang = navigator.language.toLowerCase();
+  if (browserLang.startsWith("en")) return "en";
+  
+  // Default to Czech for all other languages (app is for Prague)
+  return "cs";
+}
+
+export function saveLocale(locale: Locale): void {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("locale", locale);
+  }
+}
