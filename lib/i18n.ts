@@ -81,6 +81,8 @@ export const translations = {
     open: "Otevřeno",
     openingHours: "Otevírací doba",
     today: "Dnes",
+    open24_7: "Otevřeno 24/7",
+    alwaysOpen: "Nonstop",
     
     // Multisport
     multisport: "MultiSport",
@@ -165,6 +167,8 @@ export const translations = {
     open: "Open",
     openingHours: "Opening Hours",
     today: "Today",
+    open24_7: "Open 24/7",
+    alwaysOpen: "Always Open",
     
     // Multisport
     multisport: "MultiSport",

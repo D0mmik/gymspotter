@@ -145,7 +145,7 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
       gym_rating: gym.rating,
       gym_address: gym.address,
       has_photos: gym.photos && gym.photos.length > 0,
-      is_open: gym.openingHours ? isGymOpen(gym.openingHours) : null,
+      is_open: gym.openingHours ? isGymOpen(gym.openingHours) : true, // null openingHours means 24/7
       multisport: gym.multisport,
     });
 
@@ -380,7 +380,7 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
                       {isGymOpen(selectedGym.openingHours) ? t("open") : t("closed")}
                     </span>
                   ) : (
-                    <span className="text-sm md:text-base text-zinc-400">{selectedGym.hours}</span>
+                    <span className="text-sm md:text-base font-medium text-green-400">{t("open24_7")}</span>
                   )}
                 </div>
               </DrawerHeader>
@@ -475,7 +475,11 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
                       })}
                     </div>
                   ) : (
-                    <p className="text-zinc-300 text-sm md:text-base">{selectedGym.hours}</p>
+                    <div className="flex items-center justify-center py-4 px-3 rounded-lg bg-green-500/10 border border-green-500/30">
+                      <span className="text-green-400 font-medium text-sm md:text-base">
+                        {t("alwaysOpen")} — 24/7
+                      </span>
+                    </div>
                   )}
                 </div>
 
