@@ -350,7 +350,7 @@ export const GymMap = forwardRef<GymMapRef, GymMapProps>(({ multisportFilter }, 
             </Marker>
           )}
 
-          {gyms.map((gym) => (
+          {gyms?.map((gym) => (
             <Marker
               key={gym._id}
               longitude={gym.longitude}
