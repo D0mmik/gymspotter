@@ -48,16 +48,14 @@ export default function Home() {
   // Don't render UI text until locale is determined to prevent flash
   if (!isReady) {
     return (
-      <main className="relative h-[100dvh] w-full overflow-hidden bg-zinc-950">
-        <div className="h-full w-full">
-          <GymMap ref={mapRef} multisportFilter={null} />
-        </div>
+      <main className="relative min-h-screen w-full overflow-hidden bg-zinc-950">
+        <GymMap ref={mapRef} multisportFilter={null} />
       </main>
     );
   }
 
   return (
-    <main className="relative h-[100dvh] w-full overflow-hidden">
+    <main className="relative min-h-screen w-full overflow-hidden">
       <header 
         className="absolute top-0 left-0 right-0 z-10
           bg-zinc-950/40 backdrop-blur-md
@@ -95,12 +93,11 @@ export default function Home() {
           </div>
         </div>
       </header>
-      <div className="h-full w-full relative">
-        <GymMap ref={mapRef} multisportFilter={multisportFilter} />
-        <div 
-          className="absolute right-4 z-20 flex flex-row gap-3"
-          style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)" }}
-        >
+      <GymMap ref={mapRef} multisportFilter={multisportFilter} />
+      <div 
+        className="fixed right-4 z-20 flex flex-row gap-3"
+        style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 24px)" }}
+      >
           <Button
             variant="ghost"
             onClick={toggleMultisportFilter}
@@ -135,7 +132,6 @@ export default function Home() {
               <Navigation className="w-6 h-6 text-red-500" />
             </Button>
           )}
-        </div>
       </div>
 
       <AddGymDrawer open={addGymOpen} onOpenChange={setAddGymOpen} />

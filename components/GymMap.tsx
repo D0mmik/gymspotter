@@ -316,7 +316,7 @@ export const GymMap = forwardRef<GymMapRef, GymMapProps>(({ multisportFilter }, 
 
   if (allGyms === undefined) {
     return (
-      <div className="flex h-[100dvh] items-center justify-center bg-zinc-950 text-white">
+      <div className="fixed inset-0 flex items-center justify-center bg-zinc-950 text-white">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500 mx-auto"></div>
           {isReady && <p className="text-zinc-400 mt-4 text-sm">{t("loading")}</p>}
@@ -327,7 +327,7 @@ export const GymMap = forwardRef<GymMapRef, GymMapProps>(({ multisportFilter }, 
 
   return (
     <>
-      <div className="h-[100dvh] w-full">
+      <div className="fixed inset-0 w-full h-full">
         <Map
           ref={mapRef}
           {...viewState}
