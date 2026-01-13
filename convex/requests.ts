@@ -94,3 +94,30 @@ export const createErrorReport = mutation({
     return reportId;
   },
 });
+
+// Create a new equipment request
+export const createEquipmentRequest = mutation({
+  args: {
+    gymId: v.id("gyms"),
+    gymName: v.string(),
+    rackCount: v.optional(v.number()),
+    dumbbellMaxKg: v.optional(v.number()),
+    hasDeadliftPlatform: v.optional(v.boolean()),
+    hasMagnesium: v.optional(v.boolean()),
+    hasAirCon: v.optional(v.boolean()),
+  },
+  handler: async (ctx, args) => {
+    const requestId = await ctx.db.insert("equipmentRequests", {
+      gymId: args.gymId,
+      gymName: args.gymName,
+      rackCount: args.rackCount,
+      dumbbellMaxKg: args.dumbbellMaxKg,
+      hasDeadliftPlatform: args.hasDeadliftPlatform,
+      hasMagnesium: args.hasMagnesium,
+      hasAirCon: args.hasAirCon,
+      status: "pending",
+      createdAt: Date.now(),
+    });
+    return requestId;
+  },
+});

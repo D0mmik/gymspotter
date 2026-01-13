@@ -14,10 +14,11 @@ import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { User, Camera, Copy, Globe, Phone, AlertTriangle, Banknote } from "lucide-react";
+import { User, Camera, Copy, Globe, Phone, AlertTriangle, Banknote, Dumbbell, Check, X as XIcon, HelpCircle } from "lucide-react";
 import { useLocale } from "@/components/LocaleProvider";
 import { PhotoDrawer } from "@/components/PhotoDrawer";
 import { ReportDrawer } from "@/components/ReportDrawer";
+import { EquipmentDrawer } from "@/components/EquipmentDrawer";
 import { translations } from "@/lib/i18n";
 import { useFeatureFlag, posthog } from "@/components/PostHogProvider";
 import { Button } from "@/components/ui/button";
@@ -65,6 +66,12 @@ type Gym = {
   photos: string[];
   multisport?: boolean;
   singleEntryPrice?: number;
+  // Equipment fields
+  rackCount?: number;
+  dumbbellMaxKg?: number;
+  hasDeadliftPlatform?: boolean;
+  hasMagnesium?: boolean;
+  hasAirCon?: boolean;
 };
 
 // Days of week in order
@@ -109,6 +116,7 @@ export const GymMap = forwardRef<GymMapRef, GymMapProps>(({ multisportFilter }, 
   const [notification, setNotification] = useState<string | null>(null);
   const [photoDrawerOpen, setPhotoDrawerOpen] = useState(false);
   const [reportDrawerOpen, setReportDrawerOpen] = useState(false);
+  const [equipmentDrawerOpen, setEquipmentDrawerOpen] = useState(false);
   const mapRef = useRef<MapRef>(null);
   const { t, isReady } = useLocale();
   const isLocationEnabled = useFeatureFlag("user-location");
@@ -205,6 +213,18 @@ export const GymMap = forwardRef<GymMapRef, GymMapProps>(({ multisportFilter }, 
 
     if (selectedGym) {
       posthog.capture("report_drawer_opened", {
+        gym_id: selectedGym._id,
+        gym_name: selectedGym.name,
+      });
+    }
+  };
+
+  // Handle equipment drawer open
+  const handleEquipmentDrawerOpen = () => {
+    setEquipmentDrawerOpen(true);
+
+    if (selectedGym) {
+      posthog.capture("equipment_drawer_opened", {
         gym_id: selectedGym._id,
         gym_name: selectedGym.name,
       });
@@ -458,24 +478,24 @@ export const GymMap = forwardRef<GymMapRef, GymMapProps>(({ multisportFilter }, 
                 {/* Opening Hours - only show if not 24/7 */}
                 {selectedGym.openingHours && (
                   <div className="mb-6">
-                    <h3 className="text-lg md:text-xl font-semibold mb-3 text-white">
+                    <h3 className="text-lg md:text-xl font-semibold mb-2 text-white">
                       {t("openingHours")}
                     </h3>
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       {DAYS_ORDER.map((day) => {
                         const dayHours = selectedGym.openingHours![day];
                         const isToday = getCurrentDay() === day;
                         return (
                           <div
                             key={day}
-                            className={`flex items-center py-2 px-3 rounded-lg ${
+                            className={`flex items-center py-1.5 px-3 rounded-lg ${
                               isToday ? "bg-red-500/10 border border-red-500/30" : ""
                             }`}
                           >
-                            <span className={`text-sm md:text-base w-1/3 ${isToday ? "text-red-500 font-medium" : "text-zinc-400"}`}>
+                            <span className={`text-sm w-1/3 ${isToday ? "text-red-500 font-medium" : "text-zinc-400"}`}>
                               {t(day as keyof typeof translations.cs)}
                             </span>
-                            <span className={`text-sm md:text-base w-1/3 text-center ${isToday ? "text-white font-medium" : "text-zinc-300"}`}>
+                            <span className={`text-sm w-1/3 text-center ${isToday ? "text-white font-medium" : "text-zinc-300"}`}>
                               {dayHours.closed ? t("closed") : `${dayHours.open} - ${dayHours.close}`}
                             </span>
                             <span className="text-xs w-1/3 text-right text-red-500">
@@ -487,6 +507,115 @@ export const GymMap = forwardRef<GymMapRef, GymMapProps>(({ multisportFilter }, 
                     </div>
                   </div>
                 )}
+
+                {/* Equipment */}
+                <div className="mb-6">
+                  <h3 className="text-lg md:text-xl font-semibold mb-3 text-white">
+                    {t("equipment")}
+                  </h3>
+                  <div className="space-y-2 mb-3">
+                    {/* Rack count */}
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        {selectedGym.rackCount !== undefined ? (
+                          <Dumbbell className="w-4 h-4 text-zinc-500" />
+                        ) : (
+                          <HelpCircle className="w-4 h-4 text-zinc-600" />
+                        )}
+                        <span className={selectedGym.rackCount !== undefined ? "text-zinc-400" : "text-zinc-600"}>
+                          {t("rackCount")}
+                        </span>
+                      </div>
+                      <span className={selectedGym.rackCount !== undefined ? "text-zinc-300" : "text-zinc-600"}>
+                        {selectedGym.rackCount !== undefined ? selectedGym.rackCount : "?"}
+                      </span>
+                    </div>
+                    {/* Dumbbell max */}
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        {selectedGym.dumbbellMaxKg !== undefined ? (
+                          <Dumbbell className="w-4 h-4 text-zinc-500" />
+                        ) : (
+                          <HelpCircle className="w-4 h-4 text-zinc-600" />
+                        )}
+                        <span className={selectedGym.dumbbellMaxKg !== undefined ? "text-zinc-400" : "text-zinc-600"}>
+                          {t("dumbbellMaxKg")}
+                        </span>
+                      </div>
+                      <span className={selectedGym.dumbbellMaxKg !== undefined ? "text-zinc-300" : "text-zinc-600"}>
+                        {selectedGym.dumbbellMaxKg !== undefined ? `${selectedGym.dumbbellMaxKg} kg` : "?"}
+                      </span>
+                    </div>
+                    {/* Deadlift platform */}
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        {selectedGym.hasDeadliftPlatform !== undefined ? (
+                          selectedGym.hasDeadliftPlatform ? (
+                            <Check className="w-4 h-4 text-green-400" />
+                          ) : (
+                            <XIcon className="w-4 h-4 text-zinc-500" />
+                          )
+                        ) : (
+                          <HelpCircle className="w-4 h-4 text-zinc-600" />
+                        )}
+                        <span className={
+                          selectedGym.hasDeadliftPlatform === undefined ? "text-zinc-600" :
+                          selectedGym.hasDeadliftPlatform ? "text-zinc-300" : "text-zinc-500"
+                        }>
+                          {t("hasDeadliftPlatform")}
+                        </span>
+                      </div>
+                    </div>
+                    {/* Magnesium */}
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        {selectedGym.hasMagnesium !== undefined ? (
+                          selectedGym.hasMagnesium ? (
+                            <Check className="w-4 h-4 text-green-400" />
+                          ) : (
+                            <XIcon className="w-4 h-4 text-zinc-500" />
+                          )
+                        ) : (
+                          <HelpCircle className="w-4 h-4 text-zinc-600" />
+                        )}
+                        <span className={
+                          selectedGym.hasMagnesium === undefined ? "text-zinc-600" :
+                          selectedGym.hasMagnesium ? "text-zinc-300" : "text-zinc-500"
+                        }>
+                          {t("hasMagnesium")}
+                        </span>
+                      </div>
+                    </div>
+                    {/* Air conditioning */}
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        {selectedGym.hasAirCon !== undefined ? (
+                          selectedGym.hasAirCon ? (
+                            <Check className="w-4 h-4 text-green-400" />
+                          ) : (
+                            <XIcon className="w-4 h-4 text-zinc-500" />
+                          )
+                        ) : (
+                          <HelpCircle className="w-4 h-4 text-zinc-600" />
+                        )}
+                        <span className={
+                          selectedGym.hasAirCon === undefined ? "text-zinc-600" :
+                          selectedGym.hasAirCon ? "text-zinc-300" : "text-zinc-500"
+                        }>
+                          {t("hasAirCon")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Add equipment info button */}
+                  <Button
+                    variant="ghost"
+                    onClick={handleEquipmentDrawerOpen}
+                    className="text-red-500 hover:text-red-400 active:text-red-300 text-sm font-medium transition-colors px-0 hover:bg-transparent"
+                  >
+                    {t("addEquipmentInfo")}
+                  </Button>
+                </div>
 
                 {/* Contact */}
                 <div className="flex flex-col items-start gap-3 text-sm md:text-base">
@@ -555,6 +684,15 @@ export const GymMap = forwardRef<GymMapRef, GymMapProps>(({ multisportFilter }, 
         <ReportDrawer
           open={reportDrawerOpen}
           onOpenChange={setReportDrawerOpen}
+          gymId={selectedGym._id}
+          gymName={selectedGym.name}
+        />
+      )}
+
+      {selectedGym && (
+        <EquipmentDrawer
+          open={equipmentDrawerOpen}
+          onOpenChange={setEquipmentDrawerOpen}
           gymId={selectedGym._id}
           gymName={selectedGym.name}
         />

@@ -28,6 +28,12 @@ export default defineSchema({
     photos: v.array(v.string()),
     multisport: v.optional(v.boolean()), // Whether the gym accepts Multisport card
     singleEntryPrice: v.optional(v.number()), // Single entry price in CZK
+    // Equipment fields
+    rackCount: v.optional(v.number()), // Number of squat/power racks
+    dumbbellMaxKg: v.optional(v.number()), // Maximum dumbbell weight in kg
+    hasDeadliftPlatform: v.optional(v.boolean()), // Has deadlift platform
+    hasMagnesium: v.optional(v.boolean()), // Has chalk/magnesium available
+    hasAirCon: v.optional(v.boolean()), // Has air conditioning
   }),
 
   // User-submitted gym requests
@@ -54,6 +60,19 @@ export default defineSchema({
     gymName: v.string(),
     message: v.string(),
     status: v.string(), // "pending", "resolved", "dismissed"
+    createdAt: v.number(),
+  }),
+
+  // User-submitted equipment info
+  equipmentRequests: defineTable({
+    gymId: v.id("gyms"),
+    gymName: v.string(),
+    rackCount: v.optional(v.number()),
+    dumbbellMaxKg: v.optional(v.number()),
+    hasDeadliftPlatform: v.optional(v.boolean()),
+    hasMagnesium: v.optional(v.boolean()),
+    hasAirCon: v.optional(v.boolean()),
+    status: v.string(), // "pending", "approved", "rejected"
     createdAt: v.number(),
   }),
 });

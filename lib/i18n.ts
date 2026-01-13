@@ -102,6 +102,20 @@ export const translations = {
     reportDescription: "Našli jste chybu v údajích? Napište nám, co je špatně.",
     reportPlaceholder: "Popište, co je špatně (např. špatná adresa, otevírací doba...)",
     reportSuccess: "Děkujeme za nahlášení!",
+    
+    // Equipment
+    equipment: "Vybavení",
+    rackCount: "Počet racků",
+    dumbbellMaxKg: "Max. jednoručky",
+    hasDeadliftPlatform: "Deadlift platforma",
+    hasMagnesium: "Magnézium",
+    hasAirCon: "Klimatizace",
+    yes: "Ano",
+    no: "Ne",
+    noEquipmentInfo: "Byl/a jsi tady? Pomoz nám doplnit info!",
+    addEquipmentInfo: "Doplnit vybavení →",
+    equipmentDescription: "Vyplň, co víš. Všechna pole jsou volitelná.",
+    equipmentSuccess: "Díky za doplnění! Brzy to zkontrolujeme.",
   },
   en: {
     // Header
@@ -202,6 +216,20 @@ export const translations = {
     reportDescription: "Found incorrect information? Let us know what's wrong.",
     reportPlaceholder: "Describe what's wrong (e.g. wrong address, opening hours...)",
     reportSuccess: "Thanks for reporting!",
+    
+    // Equipment
+    equipment: "Equipment",
+    rackCount: "Rack count",
+    dumbbellMaxKg: "Max. dumbbells",
+    hasDeadliftPlatform: "Deadlift platform",
+    hasMagnesium: "Chalk/Magnesium",
+    hasAirCon: "Air conditioning",
+    yes: "Yes",
+    no: "No",
+    noEquipmentInfo: "Been here? Help us complete the info!",
+    addEquipmentInfo: "Add equipment info →",
+    equipmentDescription: "Fill in what you know. All fields are optional.",
+    equipmentSuccess: "Thanks for contributing! We'll review it soon.",
   },
 } as const;
 

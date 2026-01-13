@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gym Spotter - Find Gyms in Prague",
-  description: "Discover the best gyms and fitness centers in Prague. Interactive map with real-time information, ratings, and contact details for all gyms in Prague.",
-  keywords: ["gym", "fitness", "Prague", "fitcentrum", "posilovna", "Praha", "workout", "gym finder"],
+  title: "Gym Spotter | Mapa a hledač fitek v Praze",
+  description: "Najdi nejlepší fitka a posilovny v Praze. Interaktivní mapa s aktuálními informacemi, otevírací dobou a kontakty na všechna fitcentra v Praze.",
+  keywords: ["gym", "fitness", "Prague", "fitcentrum", "posilovna", "Praha", "workout", "gym finder", "fitko", "mapa fitek"],
   authors: [{ name: "Gym Spotter" }],
   creator: "Gym Spotter",
   publisher: "Gym Spotter",
@@ -38,14 +38,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "cs_CZ",
     alternateLocale: "en_US",
-    title: "Gym Spotter - Find Gyms in Prague",
-    description: "Discover the best gyms and fitness centers in Prague. Interactive map with real-time information.",
+    title: "Gym Spotter | Mapa a hledač fitek v Praze",
+    description: "Najdi nejlepší fitka a posilovny v Praze. Interaktivní mapa s aktuálními informacemi.",
     siteName: "Gym Spotter",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gym Spotter - Find Gyms in Prague",
-    description: "Discover the best gyms and fitness centers in Prague.",
+    title: "Gym Spotter | Mapa a hledač fitek v Praze",
+    description: "Najdi nejlepší fitka a posilovny v Praze.",
   },
   robots: {
     index: true,
