@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
-import { LocaleProvider } from "@/components/LocaleProvider";
-import { PostHogProvider } from "@/components/PostHogProvider";
+import {Toaster} from "@/components/ui/sonner";
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,6 +15,10 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+export async function generateStaticParams() {
+  return [{ locale: 'cs' }, { locale: 'en' }]
+}
 
 export const metadata: Metadata = {
   title: "Gym Spotter | Mapa a hledač fitek v Praze",
@@ -65,26 +70,33 @@ export const viewport: Viewport = {
   themeColor: "#09090b",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
+  params,
+}: {
   children: React.ReactNode;
-}>) {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const messages = await getMessages();
+
   return (
-    <html lang="cs" className="dark">
+    <html lang={locale} className="dark">
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="apple-touch-icon" href="/web-app-manifest-192x192.png" />
+        <title>Gym Spotter | Mapa a hledač fitek v Praze</title>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <PostHogProvider>
+        <NextIntlClientProvider messages={messages}>
           <ConvexClientProvider>
-            <LocaleProvider>{children}</LocaleProvider>
+            {children}
           </ConvexClientProvider>
-        </PostHogProvider>
+          <Toaster/>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

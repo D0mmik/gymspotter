@@ -5,7 +5,6 @@ import { v } from "convex/values";
 const dayHours = v.object({
   open: v.string(),  // e.g. "06:00"
   close: v.string(), // e.g. "22:00"
-  closed: v.optional(v.boolean()), // true if closed that day
 });
 
 export default defineSchema({
@@ -26,7 +25,7 @@ export default defineSchema({
     longitude: v.number(),
     latitude: v.number(),
     photos: v.array(v.string()),
-    multisport: v.optional(v.boolean()), // Whether the gym accepts Multisport card
+    multisport: v.boolean(), // Whether the gym accepts Multisport card
     singleEntryPrice: v.optional(v.number()), // Single entry price in CZK
     // Equipment fields
     rackCount: v.optional(v.number()), // Number of squat/power racks

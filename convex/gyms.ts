@@ -14,21 +14,6 @@ export const getById = query({
   },
 });
 
-export const create = mutation({
-  args: {
-    name: v.string(),
-    address: v.string(),
-    phone: v.string(),
-    website: v.optional(v.string()),
-    longitude: v.number(),
-    latitude: v.number(),
-    photos: v.array(v.string()),
-  },
-  handler: async (ctx, args) => {
-    return await ctx.db.insert("gyms", args);
-  },
-});
-
 export const update = mutation({
   args: {
     id: v.id("gyms"),
