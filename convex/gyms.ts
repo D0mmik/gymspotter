@@ -18,11 +18,8 @@ export const create = mutation({
   args: {
     name: v.string(),
     address: v.string(),
-    description: v.string(),
-    hours: v.string(),
     phone: v.string(),
     website: v.optional(v.string()),
-    rating: v.number(),
     longitude: v.number(),
     latitude: v.number(),
     photos: v.array(v.string()),
@@ -37,11 +34,8 @@ export const update = mutation({
     id: v.id("gyms"),
     name: v.optional(v.string()),
     address: v.optional(v.string()),
-    description: v.optional(v.string()),
-    hours: v.optional(v.string()),
     phone: v.optional(v.string()),
     website: v.optional(v.string()),
-    rating: v.optional(v.number()),
     longitude: v.optional(v.number()),
     latitude: v.optional(v.number()),
     photos: v.optional(v.array(v.string())),
@@ -52,11 +46,8 @@ export const update = mutation({
 
     if (updates.name !== undefined) updateData.name = updates.name;
     if (updates.address !== undefined) updateData.address = updates.address;
-    if (updates.description !== undefined) updateData.description = updates.description;
-    if (updates.hours !== undefined) updateData.hours = updates.hours;
     if (updates.phone !== undefined) updateData.phone = updates.phone;
     if (updates.website !== undefined) updateData.website = updates.website;
-    if (updates.rating !== undefined) updateData.rating = updates.rating;
     if (updates.longitude !== undefined) updateData.longitude = updates.longitude;
     if (updates.latitude !== undefined) updateData.latitude = updates.latitude;
     if (updates.photos !== undefined) updateData.photos = updates.photos;

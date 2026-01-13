@@ -14,11 +14,13 @@ import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { User, Camera, Copy, Globe, Phone, Dumbbell } from "lucide-react";
+import { User, Camera, Copy, Globe, Phone, AlertTriangle, Banknote } from "lucide-react";
 import { useLocale } from "@/components/LocaleProvider";
 import { PhotoDrawer } from "@/components/PhotoDrawer";
+import { ReportDrawer } from "@/components/ReportDrawer";
 import { translations } from "@/lib/i18n";
 import { useFeatureFlag, posthog } from "@/components/PostHogProvider";
+import { Button } from "@/components/ui/button";
 
 const PRAGUE_CENTER = {
   longitude: 14.4378,
@@ -55,16 +57,14 @@ type Gym = {
   _creationTime: number;
   name: string;
   address: string;
-  description: string;
-  hours: string;
   openingHours?: OpeningHours;
   phone: string;
   website?: string;
-  rating: number;
   longitude: number;
   latitude: number;
   photos: string[];
   multisport?: boolean;
+  singleEntryPrice?: number;
 };
 
 // Days of week in order
@@ -97,18 +97,29 @@ export interface GymMapRef {
   centerOnLocation: () => void;
 }
 
-export const GymMap = forwardRef<GymMapRef>((_, ref) => {
+interface GymMapProps {
+  multisportFilter: boolean | null; // null = all, true = multisport only, false = no multisport
+}
+
+export const GymMap = forwardRef<GymMapRef, GymMapProps>(({ multisportFilter }, ref) => {
   const [viewState, setViewState] = useState<ViewState>(INITIAL_VIEWSTATE);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedGym, setSelectedGym] = useState<Gym | null>(null);
   const [userLocation, setUserLocation] = useState<{ longitude: number; latitude: number } | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
   const [photoDrawerOpen, setPhotoDrawerOpen] = useState(false);
+  const [reportDrawerOpen, setReportDrawerOpen] = useState(false);
   const mapRef = useRef<MapRef>(null);
   const { t, isReady } = useLocale();
   const isLocationEnabled = useFeatureFlag("user-location");
 
-  const gyms = useQuery(api.gyms.getAll);
+  const allGyms = useQuery(api.gyms.getAll);
+  
+  // Filter gyms based on multisport filter
+  const gyms = allGyms?.filter((gym) => {
+    if (multisportFilter === null) return true;
+    return gym.multisport === multisportFilter;
+  });
 
   // Show notification toast to user
   const showNotificationToUser = (message: string, duration = 3000) => {
@@ -142,7 +153,6 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
     posthog.capture("gym_marker_clicked", {
       gym_id: gym._id,
       gym_name: gym.name,
-      gym_rating: gym.rating,
       gym_address: gym.address,
       has_photos: gym.photos && gym.photos.length > 0,
       is_open: gym.openingHours ? isGymOpen(gym.openingHours) : true, // null openingHours means 24/7
@@ -187,6 +197,18 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
       gym_name: gym.name,
       website: gym.website,
     });
+  };
+
+  // Handle report drawer open
+  const handleReportDrawerOpen = () => {
+    setReportDrawerOpen(true);
+
+    if (selectedGym) {
+      posthog.capture("report_drawer_opened", {
+        gym_id: selectedGym._id,
+        gym_name: selectedGym.name,
+      });
+    }
   };
 
   useImperativeHandle(ref, () => ({
@@ -271,7 +293,7 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
     );
   }
 
-  if (gyms === undefined) {
+  if (allGyms === undefined) {
     return (
       <div className="flex h-[100dvh] items-center justify-center bg-zinc-950 text-white">
         <div className="text-center">
@@ -357,30 +379,41 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
                   {selectedGym.name}
                 </DrawerTitle>
                 <DrawerDescription asChild>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => copyAddress(selectedGym.address, selectedGym.name, selectedGym._id)}
-                    className="flex items-center justify-center gap-2 text-zinc-400 text-sm md:text-base hover:text-zinc-300 transition-colors cursor-pointer group w-full"
+                    className="flex items-center justify-center gap-2 text-zinc-400 text-sm md:text-base hover:text-zinc-300 hover:bg-transparent transition-colors cursor-pointer group w-full h-auto"
                   >
                     <span>{selectedGym.address}</span>
                     <Copy className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </button>
+                  </Button>
                 </DrawerDescription>
-                <div className="flex items-center justify-center gap-3 mt-3">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-yellow-500 text-lg">★</span>
-                    <span className="text-sm md:text-base font-medium">{selectedGym.rating}</span>
-                  </div>
-                  <span className="text-zinc-600">•</span>
+                <div className="flex items-center justify-center gap-2 mt-3 overflow-x-auto">
                   {selectedGym.openingHours ? (
                     <span
-                      className={`text-sm md:text-base font-medium ${
+                      className={`text-sm md:text-base font-medium whitespace-nowrap ${
                         isGymOpen(selectedGym.openingHours) ? "text-green-400" : "text-red-400"
                       }`}
                     >
                       {isGymOpen(selectedGym.openingHours) ? t("open") : t("closed")}
                     </span>
                   ) : (
-                    <span className="text-sm md:text-base font-medium text-green-400">{t("open24_7")}</span>
+                    <span className="text-sm md:text-base font-medium text-green-400 whitespace-nowrap">{t("open24_7")}</span>
+                  )}
+                  {selectedGym.multisport !== undefined && (
+                    <>
+                      <span className="text-zinc-600">•</span>
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
+                          selectedGym.multisport
+                            ? "bg-green-500/20 text-green-400"
+                            : "bg-zinc-700/50 text-zinc-500"
+                        }`}
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full ${selectedGym.multisport ? "bg-green-500" : "bg-zinc-500"}`} />
+                        {selectedGym.multisport ? t("multisportYes") : t("multisportNo")}
+                      </span>
+                    </>
                   )}
                 </div>
               </DrawerHeader>
@@ -411,45 +444,23 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
                       <p className="text-zinc-400 text-sm md:text-base text-center mb-3">
                         {t("noPhotos")}
                       </p>
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={handlePhotoDrawerOpen}
                         className="text-red-500 hover:text-red-400 active:text-red-300 text-sm md:text-base font-medium transition-colors px-4 py-2 rounded-lg hover:bg-red-500/10"
                       >
                         {t("submitPhoto")}
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </div>
 
-                <div className="mb-6">
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <h3 className="text-lg md:text-xl font-semibold text-white">
-                      {t("about")}
+                {/* Opening Hours - only show if not 24/7 */}
+                {selectedGym.openingHours && (
+                  <div className="mb-6">
+                    <h3 className="text-lg md:text-xl font-semibold mb-3 text-white">
+                      {t("openingHours")}
                     </h3>
-                    {selectedGym.multisport !== undefined && (
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
-                          selectedGym.multisport
-                            ? "bg-green-500/20 text-green-400"
-                            : "bg-zinc-700/50 text-zinc-500"
-                        }`}
-                      >
-                        <span className={`w-1.5 h-1.5 rounded-full ${selectedGym.multisport ? "bg-green-500" : "bg-zinc-500"}`} />
-                        {selectedGym.multisport ? t("multisportYes") : t("multisportNo")}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-zinc-300 text-sm md:text-base leading-relaxed">
-                    {selectedGym.description}
-                  </p>
-                </div>
-
-                {/* Opening Hours */}
-                <div className="mb-6">
-                  <h3 className="text-lg md:text-xl font-semibold mb-3 text-white">
-                    {t("openingHours")}
-                  </h3>
-                  {selectedGym.openingHours ? (
                     <div className="space-y-2">
                       {DAYS_ORDER.map((day) => {
                         const dayHours = selectedGym.openingHours![day];
@@ -474,14 +485,8 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
                         );
                       })}
                     </div>
-                  ) : (
-                    <div className="flex items-center justify-center py-4 px-3 rounded-lg bg-green-500/10 border border-green-500/30">
-                      <span className="text-green-400 font-medium text-sm md:text-base">
-                        {t("alwaysOpen")} — 24/7
-                      </span>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {/* Contact */}
                 <div className="flex flex-col items-start gap-3 text-sm md:text-base">
@@ -505,15 +510,31 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => handleWebsiteClick(selectedGym)}
-                        className="text-red-500 hover:text-red-400 transition-colors break-all"
+                        className="text-red-500 hover:text-red-400 transition-colors"
                       >
-                        {selectedGym.website
-                          .replace(/^https?:\/\//, '')
-                          .replace(/^www\./, '')
-                          .replace(/\/$/, '')}
+                        {new URL(selectedGym.website).hostname.replace(/^www\./, '')}
                       </a>
                     </div>
                   )}
+                  {selectedGym.singleEntryPrice !== undefined && (
+                    <div className="flex items-center gap-3">
+                      <Banknote className="w-4 h-4 text-zinc-500 shrink-0" />
+                      <span className="text-zinc-500 whitespace-nowrap">{t("singleEntry")}</span>
+                      <span className="text-zinc-300 whitespace-nowrap">{selectedGym.singleEntryPrice} Kč</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Report Error Button */}
+                <div className="mt-6 pt-6 border-t border-zinc-800">
+                  <Button
+                    variant="ghost"
+                    onClick={handleReportDrawerOpen}
+                    className="flex items-center gap-2 text-zinc-500 hover:text-amber-500 hover:bg-transparent transition-colors text-sm h-auto p-0"
+                  >
+                    <AlertTriangle className="w-4 h-4" />
+                    {t("reportError")}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -525,6 +546,15 @@ export const GymMap = forwardRef<GymMapRef>((_, ref) => {
         <PhotoDrawer
           open={photoDrawerOpen}
           onOpenChange={setPhotoDrawerOpen}
+          gymId={selectedGym._id}
+          gymName={selectedGym.name}
+        />
+      )}
+
+      {selectedGym && (
+        <ReportDrawer
+          open={reportDrawerOpen}
+          onOpenChange={setReportDrawerOpen}
           gymId={selectedGym._id}
           gymName={selectedGym.name}
         />

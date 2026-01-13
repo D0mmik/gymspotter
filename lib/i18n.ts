@@ -13,7 +13,6 @@ export const translations = {
     showMyLocation: "Moje poloha",
     
     // Drawer
-    about: "O fitcentru",
     phone: "Telefon",
     website: "Web",
     hours: "Otevírací doba:",
@@ -88,6 +87,21 @@ export const translations = {
     multisport: "MultiSport",
     multisportYes: "Přijímá MultiSport",
     multisportNo: "Nepřijímá MultiSport",
+    
+    // Price
+    singleEntry: "Jednorázový vstup",
+    
+    // Filter
+    filter: "Filtr",
+    filterMultisport: "Pouze MultiSport",
+    filterAll: "Všechny",
+    
+    // Report
+    reportError: "Nahlásit chybu",
+    reportTitle: "Nahlásit chybu",
+    reportDescription: "Našli jste chybu v údajích? Napište nám, co je špatně.",
+    reportPlaceholder: "Popište, co je špatně (např. špatná adresa, otevírací doba...)",
+    reportSuccess: "Děkujeme za nahlášení!",
   },
   en: {
     // Header
@@ -99,7 +113,6 @@ export const translations = {
     showMyLocation: "My location",
     
     // Drawer
-    about: "About",
     phone: "Phone",
     website: "Website",
     hours: "Hours:",
@@ -174,6 +187,21 @@ export const translations = {
     multisport: "MultiSport",
     multisportYes: "Accepts MultiSport",
     multisportNo: "No MultiSport",
+    
+    // Price
+    singleEntry: "Single entry",
+    
+    // Filter
+    filter: "Filter",
+    filterMultisport: "MultiSport only",
+    filterAll: "All",
+    
+    // Report
+    reportError: "Report error",
+    reportTitle: "Report an error",
+    reportDescription: "Found incorrect information? Let us know what's wrong.",
+    reportPlaceholder: "Describe what's wrong (e.g. wrong address, opening hours...)",
+    reportSuccess: "Thanks for reporting!",
   },
 } as const;
 

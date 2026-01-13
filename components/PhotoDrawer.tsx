@@ -6,11 +6,11 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
-  DrawerDescription,
 } from "@/components/ui/drawer";
 import { useLocale } from "@/components/LocaleProvider";
 import { Camera, Send, CheckCircle, X, AlertCircle, ImagePlus, Trash2 } from "lucide-react";
 import { useMutation } from "convex/react";
+import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import Image from "next/image";
@@ -159,21 +159,18 @@ export function PhotoDrawer({ open, onOpenChange, gymId, gymName }: PhotoDrawerP
                 <div className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-lg bg-red-500/20 border border-red-500/30">
                   <Camera className="w-5 h-5 md:w-6 md:h-6 text-red-500" />
                 </div>
-                <div>
-                  <DrawerTitle className="text-xl md:text-2xl font-bold text-white">
-                    {t("photoTitle")}
-                  </DrawerTitle>
-                  <DrawerDescription className="text-zinc-400 text-sm md:text-base">
-                    {gymName}
-                  </DrawerDescription>
-                </div>
+                <DrawerTitle className="text-xl md:text-2xl font-bold text-white">
+                  {t("photoTitle")}
+                </DrawerTitle>
               </div>
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={handleClose}
                 className="p-2 rounded-lg hover:bg-zinc-800 transition-colors"
               >
                 <X className="w-5 h-5 text-zinc-400" />
-              </button>
+              </Button>
             </div>
           </DrawerHeader>
 
@@ -185,12 +182,13 @@ export function PhotoDrawer({ open, onOpenChange, gymId, gymName }: PhotoDrawerP
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{t("thankYou")}</h3>
                 <p className="text-zinc-400 mb-6">{t("thankYouMessage")}</p>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={handleClose}
                   className="px-6 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-colors text-white font-medium"
                 >
                   {t("close")}
-                </button>
+                </Button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -233,30 +231,33 @@ export function PhotoDrawer({ open, onOpenChange, gymId, gymName }: PhotoDrawerP
                       />
                     </div>
                     <div className="flex gap-2 mt-3">
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-colors text-white text-sm font-medium"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 h-auto rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-colors text-white text-sm font-medium"
                       >
                         <ImagePlus className="w-4 h-4" />
                         {t("changePhoto")}
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
+                        variant="ghost"
                         onClick={handleRemovePhoto}
-                        className="flex items-center justify-center px-4 py-3 rounded-xl bg-zinc-800 hover:bg-red-500/20 hover:border-red-500/30 border border-transparent transition-colors text-zinc-400 hover:text-red-500"
+                        className="flex items-center justify-center px-4 py-3 h-auto rounded-xl bg-zinc-800 hover:bg-red-500/20 hover:border-red-500/30 border border-transparent transition-colors text-zinc-400 hover:text-red-500"
                       >
                         <Trash2 className="w-4 h-4" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {/* Select from gallery */}
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-full flex flex-col items-center justify-center gap-3 p-8 md:p-10 rounded-xl border-2 border-dashed border-zinc-700 hover:border-red-500/50 hover:bg-zinc-800/50 transition-colors group"
+                      className="w-full flex flex-col items-center justify-center gap-3 p-8 md:p-10 h-auto rounded-xl border-2 border-dashed border-zinc-700 hover:border-red-500/50 hover:bg-zinc-800/50 transition-colors group"
                     >
                       <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-zinc-800 group-hover:bg-red-500/20 flex items-center justify-center transition-colors">
                         <ImagePlus className="w-7 h-7 md:w-8 md:h-8 text-zinc-500 group-hover:text-red-500 transition-colors" />
@@ -264,24 +265,25 @@ export function PhotoDrawer({ open, onOpenChange, gymId, gymName }: PhotoDrawerP
                       <span className="text-zinc-400 group-hover:text-white transition-colors font-medium">
                         {t("selectPhoto")}
                       </span>
-                    </button>
+                    </Button>
 
                     {/* Take photo with camera (mobile) */}
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
                       onClick={() => cameraInputRef.current?.click()}
-                      className="w-full flex items-center justify-center gap-3 px-4 py-4 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 transition-colors md:hidden"
+                      className="w-full flex items-center justify-center gap-3 px-4 py-4 h-auto rounded-xl bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 transition-colors md:hidden"
                     >
                       <Camera className="w-5 h-5 text-zinc-400" />
                       <span className="text-zinc-300 font-medium">{t("takePhoto")}</span>
-                    </button>
+                    </Button>
                   </div>
                 )}
 
-                <button
+                <Button
                   type="submit"
                   disabled={status === "uploading" || !selectedFile}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 md:py-5 rounded-xl bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 disabled:cursor-not-allowed transition-colors text-white font-semibold text-base md:text-lg"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-4 md:py-5 h-auto rounded-xl bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 disabled:cursor-not-allowed transition-colors text-white font-semibold text-base md:text-lg"
                 >
                   {status === "uploading" ? (
                     <>
@@ -294,7 +296,7 @@ export function PhotoDrawer({ open, onOpenChange, gymId, gymName }: PhotoDrawerP
                       {t("send")}
                     </>
                   )}
-                </button>
+                </Button>
               </form>
             )}
           </div>

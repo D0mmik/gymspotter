@@ -12,8 +12,6 @@ export default defineSchema({
   gyms: defineTable({
     name: v.string(),
     address: v.string(),
-    description: v.string(),
-    hours: v.string(), // Legacy simple hours string
     openingHours: v.optional(v.object({
       monday: dayHours,
       tuesday: dayHours,
@@ -25,11 +23,11 @@ export default defineSchema({
     })),
     phone: v.string(),
     website: v.optional(v.string()), // Website URL
-    rating: v.number(),
     longitude: v.number(),
     latitude: v.number(),
     photos: v.array(v.string()),
     multisport: v.optional(v.boolean()), // Whether the gym accepts Multisport card
+    singleEntryPrice: v.optional(v.number()), // Single entry price in CZK
   }),
 
   // User-submitted gym requests
@@ -47,6 +45,15 @@ export default defineSchema({
     gymName: v.string(),
     storageId: v.id("_storage"),
     status: v.string(), // "pending", "approved", "rejected"
+    createdAt: v.number(),
+  }),
+
+  // User-submitted error reports
+  errorReports: defineTable({
+    gymId: v.id("gyms"),
+    gymName: v.string(),
+    message: v.string(),
+    status: v.string(), // "pending", "resolved", "dismissed"
     createdAt: v.number(),
   }),
 });

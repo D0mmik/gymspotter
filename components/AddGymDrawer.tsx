@@ -11,6 +11,7 @@ import {
 import { useLocale } from "@/components/LocaleProvider";
 import { MapPin, Send, CheckCircle, X, AlertCircle } from "lucide-react";
 import { useMutation } from "convex/react";
+import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { posthog } from "@/components/PostHogProvider";
 
@@ -87,12 +88,14 @@ export function AddGymDrawer({ open, onOpenChange }: AddGymDrawerProps) {
       <DrawerContent className="max-h-[85vh] md:max-h-[80vh] flex flex-col">
         <div className="mx-auto w-full max-w-lg flex flex-col h-full overflow-hidden">
           <DrawerHeader className="text-center relative shrink-0">
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={handleClose}
               className="absolute right-0 top-0 p-2 rounded-lg hover:bg-zinc-800 transition-colors"
             >
               <X className="w-5 h-5 text-zinc-400" />
-            </button>
+            </Button>
             <div className="flex flex-col items-center gap-3">
               <div className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-xl bg-red-500/20 border border-red-500/30">
                 <MapPin className="w-6 h-6 md:w-7 md:h-7 text-red-500" />
@@ -115,12 +118,13 @@ export function AddGymDrawer({ open, onOpenChange }: AddGymDrawerProps) {
               </div>
               <h3 className="text-xl md:text-2xl font-bold text-white mb-2">{t("thankYou")}</h3>
               <p className="text-zinc-400 mb-6">{t("thankYouMessage")}</p>
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleClose}
                 className="px-6 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-colors text-white font-medium"
               >
                 {t("close")}
-              </button>
+              </Button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
@@ -175,10 +179,10 @@ export function AddGymDrawer({ open, onOpenChange }: AddGymDrawerProps) {
               </div>
 
               <div className="shrink-0 px-4 py-4">
-                <button
+                <Button
                   type="submit"
                   disabled={status === "sending" || !gymName.trim() || !gymAddress.trim()}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 md:py-5 rounded-xl bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 disabled:cursor-not-allowed transition-colors text-white font-semibold text-base md:text-lg"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-4 md:py-5 h-auto rounded-xl bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 disabled:cursor-not-allowed transition-colors text-white font-semibold text-base md:text-lg"
                 >
                   {status === "sending" ? (
                     <>
@@ -191,7 +195,7 @@ export function AddGymDrawer({ open, onOpenChange }: AddGymDrawerProps) {
                       {t("send")}
                     </>
                   )}
-                </button>
+                </Button>
               </div>
             </form>
           )}

@@ -75,3 +75,22 @@ export const getPhotoUrl = query({
     return await ctx.storage.getUrl(args.storageId);
   },
 });
+
+// Create a new error report
+export const createErrorReport = mutation({
+  args: {
+    gymId: v.id("gyms"),
+    gymName: v.string(),
+    message: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const reportId = await ctx.db.insert("errorReports", {
+      gymId: args.gymId,
+      gymName: args.gymName,
+      message: args.message,
+      status: "pending",
+      createdAt: Date.now(),
+    });
+    return reportId;
+  },
+});
