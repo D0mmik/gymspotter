@@ -132,7 +132,8 @@
   }
   
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: #1D1C1D;
     /* Prevent overscroll bounce */
     overscroll-behavior: none;
     /* Disable text selection for app-like feel */
