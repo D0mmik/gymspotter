@@ -110,12 +110,14 @@ export const translations = {
     hasDeadliftPlatform: "Deadlift platforma",
     hasMagnesium: "Magnézium",
     hasAirCon: "Klimatizace",
+    hasParking: "Parkování",
     yes: "Ano",
     no: "Ne",
     noEquipmentInfo: "Byl/a jsi tady? Pomoz nám doplnit info!",
-    addEquipmentInfo: "Doplnit vybavení →",
+    addEquipmentInfo: "Byl/a jsi tady? Doplň vybavení →",
     equipmentDescription: "Vyplň, co víš. Všechna pole jsou volitelná.",
     equipmentSuccess: "Díky za doplnění! Brzy to zkontrolujeme.",
+    equipmentNotePlaceholder: "Poznámka (např. jiné vybavení, stav, ...)",
   },
   en: {
     // Header
@@ -224,12 +226,14 @@ export const translations = {
     hasDeadliftPlatform: "Deadlift platform",
     hasMagnesium: "Chalk/Magnesium",
     hasAirCon: "Air conditioning",
+    hasParking: "Parking",
     yes: "Yes",
     no: "No",
     noEquipmentInfo: "Been here? Help us complete the info!",
-    addEquipmentInfo: "Add equipment info →",
+    addEquipmentInfo: "Been here? Add equipment info →",
     equipmentDescription: "Fill in what you know. All fields are optional.",
     equipmentSuccess: "Thanks for contributing! We'll review it soon.",
+    equipmentNotePlaceholder: "Note (e.g. other equipment, condition, ...)",
   },
 } as const;
 

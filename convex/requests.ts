@@ -105,6 +105,8 @@ export const createEquipmentRequest = mutation({
     hasDeadliftPlatform: v.optional(v.boolean()),
     hasMagnesium: v.optional(v.boolean()),
     hasAirCon: v.optional(v.boolean()),
+    hasParking: v.optional(v.boolean()),
+    note: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const requestId = await ctx.db.insert("equipmentRequests", {
@@ -115,6 +117,8 @@ export const createEquipmentRequest = mutation({
       hasDeadliftPlatform: args.hasDeadliftPlatform,
       hasMagnesium: args.hasMagnesium,
       hasAirCon: args.hasAirCon,
+      hasParking: args.hasParking,
+      note: args.note,
       status: "pending",
       createdAt: Date.now(),
     });

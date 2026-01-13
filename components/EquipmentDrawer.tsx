@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Drawer,
   DrawerContent,
@@ -29,10 +29,49 @@ export function EquipmentDrawer({ open, onOpenChange, gymId, gymName }: Equipmen
   const [hasDeadliftPlatform, setHasDeadliftPlatform] = useState<boolean | null>(null);
   const [hasMagnesium, setHasMagnesium] = useState<boolean | null>(null);
   const [hasAirCon, setHasAirCon] = useState<boolean | null>(null);
+  const [hasParking, setHasParking] = useState<boolean | null>(null);
+  const [note, setNote] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
   const createEquipmentRequest = useMutation(api.requests.createEquipmentRequest);
+
+  // Load saved values from localStorage when drawer opens
+  useEffect(() => {
+    if (open) {
+      try {
+        const saved = localStorage.getItem("equipmentFormDefaults");
+        if (saved) {
+          const defaults = JSON.parse(saved);
+          if (defaults.rackCount) setRackCount(defaults.rackCount);
+          if (defaults.dumbbellMaxKg) setDumbbellMaxKg(defaults.dumbbellMaxKg);
+          if (defaults.hasDeadliftPlatform !== undefined) setHasDeadliftPlatform(defaults.hasDeadliftPlatform);
+          if (defaults.hasMagnesium !== undefined) setHasMagnesium(defaults.hasMagnesium);
+          if (defaults.hasAirCon !== undefined) setHasAirCon(defaults.hasAirCon);
+          if (defaults.hasParking !== undefined) setHasParking(defaults.hasParking);
+        }
+      } catch (e) {
+        console.error("Error loading equipment defaults:", e);
+      }
+    }
+  }, [open]);
+
+  // Save values to localStorage
+  const saveToLocalStorage = () => {
+    try {
+      const defaults = {
+        rackCount: rackCount || undefined,
+        dumbbellMaxKg: dumbbellMaxKg || undefined,
+        hasDeadliftPlatform: hasDeadliftPlatform,
+        hasMagnesium: hasMagnesium,
+        hasAirCon: hasAirCon,
+        hasParking: hasParking,
+      };
+      localStorage.setItem("equipmentFormDefaults", JSON.stringify(defaults));
+    } catch (e) {
+      console.error("Error saving equipment defaults:", e);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +82,9 @@ export function EquipmentDrawer({ open, onOpenChange, gymId, gymName }: Equipmen
       dumbbellMaxKg !== "" || 
       hasDeadliftPlatform !== null || 
       hasMagnesium !== null || 
-      hasAirCon !== null;
+      hasAirCon !== null ||
+      hasParking !== null ||
+      note.trim() !== "";
 
     if (!hasAnyValue) {
       setErrorMessage(t("errorRequired"));
@@ -63,8 +104,11 @@ export function EquipmentDrawer({ open, onOpenChange, gymId, gymName }: Equipmen
         hasDeadliftPlatform: hasDeadliftPlatform ?? undefined,
         hasMagnesium: hasMagnesium ?? undefined,
         hasAirCon: hasAirCon ?? undefined,
+        hasParking: hasParking ?? undefined,
+        note: note.trim() || undefined,
       });
       setStatus("success");
+      saveToLocalStorage();
 
       posthog.capture("equipment_request_submitted", {
         gym_id: gymId,
@@ -97,6 +141,8 @@ export function EquipmentDrawer({ open, onOpenChange, gymId, gymName }: Equipmen
       setHasDeadliftPlatform(null);
       setHasMagnesium(null);
       setHasAirCon(null);
+      setHasParking(null);
+      setNote("");
       setStatus("idle");
       setErrorMessage("");
     }, 300);
@@ -120,9 +166,9 @@ export function EquipmentDrawer({ open, onOpenChange, gymId, gymName }: Equipmen
         ) : (
           <X className="w-4 h-4 text-red-500" />
         )}
-        <span className="text-zinc-300 text-sm">{label}</span>
+        <span className="text-zinc-300 text-sm leading-none">{label}</span>
       </div>
-      <div className="flex gap-1">
+      <div className="flex items-center gap-1">
         <Button
           type="button"
           variant="ghost"
@@ -153,8 +199,8 @@ export function EquipmentDrawer({ open, onOpenChange, gymId, gymName }: Equipmen
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90vh] md:max-h-[80vh]">
-        <div className="mx-auto w-full max-w-lg">
+      <DrawerContent className="max-h-[85vh] md:max-h-[80vh] flex flex-col">
+        <div className="mx-auto w-full max-w-lg flex flex-col flex-1 min-h-0">
           <DrawerHeader className="text-left">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -176,7 +222,7 @@ export function EquipmentDrawer({ open, onOpenChange, gymId, gymName }: Equipmen
             </div>
           </DrawerHeader>
 
-          <div className="px-4 pb-8">
+          <div className="px-4 pb-6 overflow-y-auto flex-1">
             {status === "success" ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-green-500/20 flex items-center justify-center mb-4">
@@ -206,7 +252,7 @@ export function EquipmentDrawer({ open, onOpenChange, gymId, gymName }: Equipmen
                 )}
 
                 {/* Numeric inputs */}
-                <div className="space-y-3">
+                <div>
                   <div className="flex items-center justify-between py-3 border-b border-zinc-800">
                     <div className="flex items-center gap-2">
                       {rackCount === "" ? (
@@ -214,16 +260,19 @@ export function EquipmentDrawer({ open, onOpenChange, gymId, gymName }: Equipmen
                       ) : (
                         <CheckCircle className="w-4 h-4 text-green-500" />
                       )}
-                      <span className="text-zinc-300 text-sm">{t("rackCount")}</span>
+                      <span className="text-zinc-300 text-sm leading-none">{t("rackCount")}</span>
                     </div>
-                    <input
-                      type="number"
-                      min="0"
-                      value={rackCount}
-                      onChange={(e) => setRackCount(e.target.value)}
-                      placeholder="?"
-                      className="w-20 px-3 py-1.5 rounded-lg bg-zinc-800 border border-zinc-700 text-white text-sm text-center placeholder-zinc-500 focus:outline-none focus:border-red-500/50"
-                    />
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        min="0"
+                        value={rackCount}
+                        onChange={(e) => setRackCount(e.target.value)}
+                        placeholder="?"
+                        className="w-16 px-2 py-1 rounded-lg bg-zinc-800 border border-zinc-700 text-white text-sm text-center placeholder-zinc-500 focus:outline-none focus:border-red-500/50"
+                      />
+                      <span className="text-zinc-500 text-sm leading-none w-5">ks</span>
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between py-3 border-b border-zinc-800">
@@ -233,7 +282,7 @@ export function EquipmentDrawer({ open, onOpenChange, gymId, gymName }: Equipmen
                       ) : (
                         <CheckCircle className="w-4 h-4 text-green-500" />
                       )}
-                      <span className="text-zinc-300 text-sm">{t("dumbbellMaxKg")}</span>
+                      <span className="text-zinc-300 text-sm leading-none">{t("dumbbellMaxKg")}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <input
@@ -242,9 +291,9 @@ export function EquipmentDrawer({ open, onOpenChange, gymId, gymName }: Equipmen
                         value={dumbbellMaxKg}
                         onChange={(e) => setDumbbellMaxKg(e.target.value)}
                         placeholder="?"
-                        className="w-20 px-3 py-1.5 rounded-lg bg-zinc-800 border border-zinc-700 text-white text-sm text-center placeholder-zinc-500 focus:outline-none focus:border-red-500/50"
+                        className="w-16 px-2 py-1 rounded-lg bg-zinc-800 border border-zinc-700 text-white text-sm text-center placeholder-zinc-500 focus:outline-none focus:border-red-500/50"
                       />
-                      <span className="text-zinc-500 text-sm">kg</span>
+                      <span className="text-zinc-500 text-sm leading-none w-5">kg</span>
                     </div>
                   </div>
 
@@ -264,12 +313,28 @@ export function EquipmentDrawer({ open, onOpenChange, gymId, gymName }: Equipmen
                     onChange={setHasAirCon}
                     label={t("hasAirCon")}
                   />
+                  <ToggleButton
+                    value={hasParking}
+                    onChange={setHasParking}
+                    label={t("hasParking")}
+                  />
+
+                  {/* Note */}
+                  <div className="pt-3">
+                    <textarea
+                      value={note}
+                      onChange={(e) => setNote(e.target.value)}
+                      placeholder={t("equipmentNotePlaceholder")}
+                      rows={2}
+                      className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700/50 text-white placeholder-zinc-500 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-colors resize-none text-sm"
+                    />
+                  </div>
                 </div>
 
                 <Button
                   type="submit"
                   disabled={status === "sending"}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 md:py-5 h-auto rounded-xl bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 disabled:cursor-not-allowed transition-colors text-white font-semibold text-base md:text-lg mt-6"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 md:py-4 h-auto rounded-xl bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 disabled:cursor-not-allowed transition-colors text-white font-semibold text-sm md:text-base mt-4"
                 >
                   {status === "sending" ? (
                     <>

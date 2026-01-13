@@ -14,7 +14,7 @@ import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { User, Camera, Copy, Globe, Phone, AlertTriangle, Banknote, Dumbbell, Check, X as XIcon, HelpCircle } from "lucide-react";
+import { User, Camera, Copy, Globe, Phone, AlertTriangle, Banknote } from "lucide-react";
 import { useLocale } from "@/components/LocaleProvider";
 import { PhotoDrawer } from "@/components/PhotoDrawer";
 import { ReportDrawer } from "@/components/ReportDrawer";
@@ -72,6 +72,7 @@ type Gym = {
   hasDeadliftPlatform?: boolean;
   hasMagnesium?: boolean;
   hasAirCon?: boolean;
+  hasParking?: boolean;
 };
 
 // Days of week in order
@@ -513,98 +514,72 @@ export const GymMap = forwardRef<GymMapRef, GymMapProps>(({ multisportFilter }, 
                   <h3 className="text-lg md:text-xl font-semibold mb-3 text-white">
                     {t("equipment")}
                   </h3>
-                  <div className="space-y-2 mb-3">
+                  <div className="space-y-1 mb-3">
                     {/* Rack count */}
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        {selectedGym.rackCount !== undefined ? (
-                          <Dumbbell className="w-4 h-4 text-zinc-500" />
-                        ) : (
-                          <HelpCircle className="w-4 h-4 text-zinc-600" />
-                        )}
-                        <span className={selectedGym.rackCount !== undefined ? "text-zinc-400" : "text-zinc-600"}>
-                          {t("rackCount")}
-                        </span>
-                      </div>
+                    <div className="flex items-center justify-between text-sm py-1.5 px-3">
+                      <span className={selectedGym.rackCount !== undefined ? "text-zinc-400" : "text-zinc-600"}>
+                        {t("rackCount")}
+                      </span>
                       <span className={selectedGym.rackCount !== undefined ? "text-zinc-300" : "text-zinc-600"}>
-                        {selectedGym.rackCount !== undefined ? selectedGym.rackCount : "?"}
+                        {selectedGym.rackCount !== undefined ? `${selectedGym.rackCount} ks` : "?"}
                       </span>
                     </div>
                     {/* Dumbbell max */}
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        {selectedGym.dumbbellMaxKg !== undefined ? (
-                          <Dumbbell className="w-4 h-4 text-zinc-500" />
-                        ) : (
-                          <HelpCircle className="w-4 h-4 text-zinc-600" />
-                        )}
-                        <span className={selectedGym.dumbbellMaxKg !== undefined ? "text-zinc-400" : "text-zinc-600"}>
-                          {t("dumbbellMaxKg")}
-                        </span>
-                      </div>
+                    <div className="flex items-center justify-between text-sm py-1.5 px-3">
+                      <span className={selectedGym.dumbbellMaxKg !== undefined ? "text-zinc-400" : "text-zinc-600"}>
+                        {t("dumbbellMaxKg")}
+                      </span>
                       <span className={selectedGym.dumbbellMaxKg !== undefined ? "text-zinc-300" : "text-zinc-600"}>
                         {selectedGym.dumbbellMaxKg !== undefined ? `${selectedGym.dumbbellMaxKg} kg` : "?"}
                       </span>
                     </div>
                     {/* Deadlift platform */}
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        {selectedGym.hasDeadliftPlatform !== undefined ? (
-                          selectedGym.hasDeadliftPlatform ? (
-                            <Check className="w-4 h-4 text-green-400" />
-                          ) : (
-                            <XIcon className="w-4 h-4 text-zinc-500" />
-                          )
-                        ) : (
-                          <HelpCircle className="w-4 h-4 text-zinc-600" />
-                        )}
-                        <span className={
-                          selectedGym.hasDeadliftPlatform === undefined ? "text-zinc-600" :
-                          selectedGym.hasDeadliftPlatform ? "text-zinc-300" : "text-zinc-500"
-                        }>
-                          {t("hasDeadliftPlatform")}
-                        </span>
-                      </div>
+                    <div className="flex items-center justify-between text-sm py-1.5 px-3">
+                      <span className={selectedGym.hasDeadliftPlatform !== undefined ? "text-zinc-400" : "text-zinc-600"}>
+                        {t("hasDeadliftPlatform")}
+                      </span>
+                      <span className={
+                        selectedGym.hasDeadliftPlatform === undefined ? "text-zinc-600" :
+                        selectedGym.hasDeadliftPlatform ? "text-green-400" : "text-zinc-500"
+                      }>
+                        {selectedGym.hasDeadliftPlatform === undefined ? "?" : selectedGym.hasDeadliftPlatform ? "✓" : "✗"}
+                      </span>
                     </div>
                     {/* Magnesium */}
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        {selectedGym.hasMagnesium !== undefined ? (
-                          selectedGym.hasMagnesium ? (
-                            <Check className="w-4 h-4 text-green-400" />
-                          ) : (
-                            <XIcon className="w-4 h-4 text-zinc-500" />
-                          )
-                        ) : (
-                          <HelpCircle className="w-4 h-4 text-zinc-600" />
-                        )}
-                        <span className={
-                          selectedGym.hasMagnesium === undefined ? "text-zinc-600" :
-                          selectedGym.hasMagnesium ? "text-zinc-300" : "text-zinc-500"
-                        }>
-                          {t("hasMagnesium")}
-                        </span>
-                      </div>
+                    <div className="flex items-center justify-between text-sm py-1.5 px-3">
+                      <span className={selectedGym.hasMagnesium !== undefined ? "text-zinc-400" : "text-zinc-600"}>
+                        {t("hasMagnesium")}
+                      </span>
+                      <span className={
+                        selectedGym.hasMagnesium === undefined ? "text-zinc-600" :
+                        selectedGym.hasMagnesium ? "text-green-400" : "text-zinc-500"
+                      }>
+                        {selectedGym.hasMagnesium === undefined ? "?" : selectedGym.hasMagnesium ? "✓" : "✗"}
+                      </span>
                     </div>
                     {/* Air conditioning */}
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        {selectedGym.hasAirCon !== undefined ? (
-                          selectedGym.hasAirCon ? (
-                            <Check className="w-4 h-4 text-green-400" />
-                          ) : (
-                            <XIcon className="w-4 h-4 text-zinc-500" />
-                          )
-                        ) : (
-                          <HelpCircle className="w-4 h-4 text-zinc-600" />
-                        )}
-                        <span className={
-                          selectedGym.hasAirCon === undefined ? "text-zinc-600" :
-                          selectedGym.hasAirCon ? "text-zinc-300" : "text-zinc-500"
-                        }>
-                          {t("hasAirCon")}
-                        </span>
-                      </div>
+                    <div className="flex items-center justify-between text-sm py-1.5 px-3">
+                      <span className={selectedGym.hasAirCon !== undefined ? "text-zinc-400" : "text-zinc-600"}>
+                        {t("hasAirCon")}
+                      </span>
+                      <span className={
+                        selectedGym.hasAirCon === undefined ? "text-zinc-600" :
+                        selectedGym.hasAirCon ? "text-green-400" : "text-zinc-500"
+                      }>
+                        {selectedGym.hasAirCon === undefined ? "?" : selectedGym.hasAirCon ? "✓" : "✗"}
+                      </span>
+                    </div>
+                    {/* Parking */}
+                    <div className="flex items-center justify-between text-sm py-1.5 px-3">
+                      <span className={selectedGym.hasParking !== undefined ? "text-zinc-400" : "text-zinc-600"}>
+                        {t("hasParking")}
+                      </span>
+                      <span className={
+                        selectedGym.hasParking === undefined ? "text-zinc-600" :
+                        selectedGym.hasParking ? "text-green-400" : "text-zinc-500"
+                      }>
+                        {selectedGym.hasParking === undefined ? "?" : selectedGym.hasParking ? "✓" : "✗"}
+                      </span>
                     </div>
                   </div>
                   {/* Add equipment info button */}
@@ -618,44 +593,43 @@ export const GymMap = forwardRef<GymMapRef, GymMapProps>(({ multisportFilter }, 
                 </div>
 
                 {/* Contact */}
-                <div className="flex flex-col items-start gap-3 text-sm md:text-base">
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-4 h-4 text-zinc-500" />
-                    <span className="text-zinc-500 w-16">{t("phone")}</span>
-                    <a
-                      href={`tel:${selectedGym.phone}`}
-                      onClick={() => handlePhoneClick(selectedGym)}
-                      className="text-zinc-300 hover:text-white transition-colors"
-                    >
-                      {selectedGym.phone}
-                    </a>
-                  </div>
-                  {selectedGym.website && (
+                <div className="mb-6">
+                  <div className="flex flex-col items-start gap-3 text-sm md:text-base">
                     <div className="flex items-center gap-3">
-                      <Globe className="w-4 h-4 text-zinc-500" />
-                      <span className="text-zinc-500 w-16">{t("website")}</span>
+                      <Phone className="w-4 h-4 text-zinc-500" />
                       <a
-                        href={selectedGym.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => handleWebsiteClick(selectedGym)}
-                        className="text-red-500 hover:text-red-400 transition-colors"
+                        href={`tel:${selectedGym.phone}`}
+                        onClick={() => handlePhoneClick(selectedGym)}
+                        className="text-zinc-300 hover:text-white transition-colors"
                       >
-                        {new URL(selectedGym.website).hostname.replace(/^www\./, '')}
+                        {selectedGym.phone}
                       </a>
                     </div>
-                  )}
-                  {selectedGym.singleEntryPrice !== undefined && (
-                    <div className="flex items-center gap-3">
-                      <Banknote className="w-4 h-4 text-zinc-500 shrink-0" />
-                      <span className="text-zinc-500 whitespace-nowrap">{t("singleEntry")}</span>
-                      <span className="text-zinc-300 whitespace-nowrap">{selectedGym.singleEntryPrice} Kč</span>
-                    </div>
-                  )}
+                    {selectedGym.website && (
+                      <div className="flex items-center gap-3">
+                        <Globe className="w-4 h-4 text-zinc-500" />
+                        <a
+                          href={selectedGym.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => handleWebsiteClick(selectedGym)}
+                          className="text-red-500 hover:text-red-400 transition-colors"
+                        >
+                          {new URL(selectedGym.website).hostname.replace(/^www\./, '')}
+                        </a>
+                      </div>
+                    )}
+                    {selectedGym.singleEntryPrice !== undefined && (
+                      <div className="flex items-center gap-3">
+                        <Banknote className="w-4 h-4 text-zinc-500" />
+                        <span className="text-zinc-300">{selectedGym.singleEntryPrice} Kč</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Report Error Button */}
-                <div className="mt-6 pt-6 border-t border-zinc-800">
+                <div className="pt-6 border-t border-zinc-800">
                   <Button
                     variant="ghost"
                     onClick={handleReportDrawerOpen}

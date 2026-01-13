@@ -34,6 +34,7 @@ export default defineSchema({
     hasDeadliftPlatform: v.optional(v.boolean()), // Has deadlift platform
     hasMagnesium: v.optional(v.boolean()), // Has chalk/magnesium available
     hasAirCon: v.optional(v.boolean()), // Has air conditioning
+    hasParking: v.optional(v.boolean()), // Has parking available
   }),
 
   // User-submitted gym requests
@@ -72,6 +73,8 @@ export default defineSchema({
     hasDeadliftPlatform: v.optional(v.boolean()),
     hasMagnesium: v.optional(v.boolean()),
     hasAirCon: v.optional(v.boolean()),
+    hasParking: v.optional(v.boolean()),
+    note: v.optional(v.string()),
     status: v.string(), // "pending", "approved", "rejected"
     createdAt: v.number(),
   }),
