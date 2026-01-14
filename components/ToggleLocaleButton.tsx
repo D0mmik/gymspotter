@@ -3,6 +3,7 @@ import { Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export function ToggleLocaleButton() {
   const t = useTranslations();
@@ -10,16 +11,30 @@ export function ToggleLocaleButton() {
   const router = useRouter();
   const pathname = usePathname();
 
+  useEffect(() => {
+    const alternateLocale = locale === "cs" ? "en" : "cs";
+    const alternatePath = pathname.replace(`/${locale}`, `/${alternateLocale}`);
+    router.prefetch(alternatePath);
+  }, [locale, pathname, router]);
+
   const toggleLocale = () => {
     const newLocale = locale === "cs" ? "en" : "cs";
     const newPathname = pathname.replace(`/${locale}`, `/${newLocale}`);
     router.push(newPathname);
   };
 
+  // Prefetch on hover for even faster switching
+  const handleMouseEnter = () => {
+    const alternateLocale = locale === "cs" ? "en" : "cs";
+    const alternatePath = pathname.replace(`/${locale}`, `/${alternateLocale}`);
+    router.prefetch(alternatePath);
+  };
+
   return (
     <Button
       variant="ghost"
       onClick={toggleLocale}
+      onMouseEnter={handleMouseEnter}
       className="flex items-center gap-1.5 px-3 py-1.5 min-h-11 rounded-lg bg-zinc-800/50 border border-zinc-700/50 hover:bg-zinc-700/50 active:bg-zinc-600/50 transition-colors text-xs font-medium text-zinc-300"
       aria-label="Switch language"
     >

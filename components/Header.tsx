@@ -37,6 +37,7 @@ export function Header() {
           </div>
           <Link
             href={`/${locale}/about`}
+            prefetch={true}
             className="flex items-center justify-center w-11 h-11 min-h-11 rounded-lg bg-zinc-800/50 border border-zinc-700/50 hover:bg-zinc-700/50 active:bg-zinc-600/50 transition-colors"
             aria-label="Settings"
           >
