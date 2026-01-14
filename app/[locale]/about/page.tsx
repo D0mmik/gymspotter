@@ -16,7 +16,7 @@ export default async function AboutPage() {
   const t = await getTranslations();
 
   return (
-    <main className="min-h-screen w-full bg-zinc-950">
+    <main className="h-screen w-full bg-zinc-950 overflow-hidden md:min-h-screen md:overflow-auto">
       <header
         className="absolute top-0 left-0 right-0 z-10
           bg-zinc-950/40 backdrop-blur-md

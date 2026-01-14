@@ -1,12 +1,13 @@
-"use client";
 import { Dumbbell, MapPin, Settings } from "lucide-react";
-import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 
-export function Header() {
-  const t = useTranslations();
-  const locale = useLocale();
+interface HeaderProps {
+  appName: string;
+  location: string;
+  locale: string;
+}
 
+export function Header({ appName, location, locale }: HeaderProps) {
   return (
     <header
       className="absolute top-0 left-0 right-0 z-10
@@ -24,14 +25,12 @@ export function Header() {
             <div>
               <h1 className="text-xl font-bold text-white tracking-tight leading-none">
                 <span className="bg-linear-to-r from-white to-zinc-200 bg-clip-text text-transparent select-none">
-                  {t("appName")}
+                  {appName}
                 </span>
               </h1>
               <div className="flex items-center gap-1.5 mt-1.5">
                 <MapPin className="w-3.5 h-3.5 text-zinc-400" />
-                <p className="text-xs font-medium text-zinc-400">
-                  {t("location")}
-                </p>
+                <p className="text-xs font-medium text-zinc-400">{location}</p>
               </div>
             </div>
           </div>
