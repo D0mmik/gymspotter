@@ -81,5 +81,16 @@
   "addEquipmentInfo": "Byl/a jsi tady? Doplň vybavení →",
   "equipmentDescription": "Vyplň, co víš. Všechna pole jsou volitelná.",
   "equipmentSuccess": "Díky za doplnění! Brzy to zkontrolujeme.",
-  "equipmentNotePlaceholder": "Poznámka (např. jiné vybavení, stav, ...)"
+  "equipmentNotePlaceholder": "Poznámka (např. jiné vybavení, stav, ...)",
+  "aboutTitle": "O aplikaci",
+  "aboutDescription": "Gym Spotter je interaktivní mapa fitek a posiloven v Praze. Pomáháme ti najít perfektní fitko podle tvých potřeb.",
+  "aboutFeatures": "Funkce",
+  "aboutFeature1": "Interaktivní mapa všech fitek v Praze",
+  "aboutFeature2": "Filtrování podle MultiSport",
+  "aboutFeature3": "Detailní informace o vybavení",
+  "aboutFeature4": "Otevírací doba a kontakty",
+  "aboutFeature5": "Fotky od komunity",
+  "aboutContribute": "Zapoj se",
+  "aboutContributeText": "Znáš fitko, které tu chybí? Nebo máš aktuální informace? Přidej je!",
+  "aboutLinks": "Odkazy"
 }

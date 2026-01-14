@@ -8,8 +8,10 @@
  * @module
  */
 
+import type * as equipment from "../equipment.js";
 import type * as gyms from "../gyms.js";
-import type * as requests from "../requests.js";
+import type * as photos from "../photos.js";
+import type * as reports from "../reports.js";
 
 import type {
   ApiFromModules,
@@ -18,8 +20,10 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  equipment: typeof equipment;
   gyms: typeof gyms;
-  requests: typeof requests;
+  photos: typeof photos;
+  reports: typeof reports;
 }>;
 
 /**

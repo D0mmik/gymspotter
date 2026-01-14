@@ -3,7 +3,7 @@ import { v } from "convex/values";
 
 // Opening hours for a single day
 const dayHours = v.object({
-  open: v.string(),  // e.g. "06:00"
+  open: v.string(), // e.g. "06:00"
   close: v.string(), // e.g. "22:00"
 });
 
@@ -11,15 +11,17 @@ export default defineSchema({
   gyms: defineTable({
     name: v.string(),
     address: v.string(),
-    openingHours: v.optional(v.object({
-      monday: dayHours,
-      tuesday: dayHours,
-      wednesday: dayHours,
-      thursday: dayHours,
-      friday: dayHours,
-      saturday: dayHours,
-      sunday: dayHours,
-    })),
+    openingHours: v.optional(
+      v.object({
+        monday: dayHours,
+        tuesday: dayHours,
+        wednesday: dayHours,
+        thursday: dayHours,
+        friday: dayHours,
+        saturday: dayHours,
+        sunday: dayHours,
+      }),
+    ),
     phone: v.string(),
     website: v.optional(v.string()), // Website URL
     longitude: v.number(),
@@ -39,42 +41,42 @@ export default defineSchema({
   // User-submitted gym requests
   gymRequests: defineTable({
     name: v.string(),
-    address: v.string(),
-    note: v.optional(v.string()),
-    status: v.string(), // "pending", "approved", "rejected"
+    address: v.optional(v.string()),
+    message: v.optional(v.string()),
+    done: v.boolean(),
     createdAt: v.number(),
   }),
 
   // User-submitted photo requests
   photoRequests: defineTable({
     gymId: v.id("gyms"),
-    gymName: v.string(),
+    name: v.string(),
     storageId: v.id("_storage"),
-    status: v.string(), // "pending", "approved", "rejected"
+    done: v.boolean(),
     createdAt: v.number(),
   }),
 
   // User-submitted error reports
   errorReports: defineTable({
     gymId: v.id("gyms"),
-    gymName: v.string(),
+    name: v.string(),
     message: v.string(),
-    status: v.string(), // "pending", "resolved", "dismissed"
+    done: v.boolean(),
     createdAt: v.number(),
   }),
 
   // User-submitted equipment info
   equipmentRequests: defineTable({
     gymId: v.id("gyms"),
-    gymName: v.string(),
+    name: v.string(),
     rackCount: v.optional(v.number()),
     dumbbellMaxKg: v.optional(v.number()),
     hasDeadliftPlatform: v.optional(v.boolean()),
     hasMagnesium: v.optional(v.boolean()),
     hasAirCon: v.optional(v.boolean()),
     hasParking: v.optional(v.boolean()),
-    note: v.optional(v.string()),
-    status: v.string(), // "pending", "approved", "rejected"
+    message: v.optional(v.string()),
+    done: v.boolean(),
     createdAt: v.number(),
   }),
 });

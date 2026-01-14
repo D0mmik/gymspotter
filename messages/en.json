@@ -81,5 +81,16 @@
   "addEquipmentInfo": "Been here? Add equipment info →",
   "equipmentDescription": "Fill in what you know. All fields are optional.",
   "equipmentSuccess": "Thanks for contributing! We'll review it soon.",
-  "equipmentNotePlaceholder": "Note (e.g. other equipment, condition, ...)"
+  "equipmentNotePlaceholder": "Note (e.g. other equipment, condition, ...)",
+  "aboutTitle": "About",
+  "aboutDescription": "Gym Spotter is an interactive map of gyms and fitness centers in Prague. We help you find the perfect gym for your needs.",
+  "aboutFeatures": "Features",
+  "aboutFeature1": "Interactive map of all gyms in Prague",
+  "aboutFeature2": "Filter by MultiSport acceptance",
+  "aboutFeature3": "Detailed equipment information",
+  "aboutFeature4": "Opening hours and contacts",
+  "aboutFeature5": "Photos from the community",
+  "aboutContribute": "Get involved",
+  "aboutContributeText": "Know a gym that's missing? Or have updated information? Add it!",
+  "aboutLinks": "Links"
 }

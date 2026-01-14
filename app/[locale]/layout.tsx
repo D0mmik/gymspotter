@@ -2,9 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
-import {Toaster} from "@/components/ui/sonner";
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { Toaster } from "@/components/ui/sonner";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,13 +17,25 @@ const geistMono = Geist_Mono({
 });
 
 export async function generateStaticParams() {
-  return [{ locale: 'cs' }, { locale: 'en' }]
+  return [{ locale: "cs" }, { locale: "en" }];
 }
 
 export const metadata: Metadata = {
   title: "Gym Spotter | Mapa a hledač fitek v Praze",
-  description: "Najdi nejlepší fitka a posilovny v Praze. Interaktivní mapa s aktuálními informacemi, otevírací dobou a kontakty na všechna fitcentra v Praze.",
-  keywords: ["gym", "fitness", "Prague", "fitcentrum", "posilovna", "Praha", "workout", "gym finder", "fitko", "mapa fitek"],
+  description:
+    "Najdi nejlepší fitka a posilovny v Praze. Interaktivní mapa s aktuálními informacemi, otevírací dobou a kontakty na všechna fitcentra v Praze.",
+  keywords: [
+    "gym",
+    "fitness",
+    "Prague",
+    "fitcentrum",
+    "posilovna",
+    "Praha",
+    "workout",
+    "gym finder",
+    "fitko",
+    "mapa fitek",
+  ],
   authors: [{ name: "Gym Spotter" }],
   creator: "Gym Spotter",
   publisher: "Gym Spotter",
@@ -44,7 +56,8 @@ export const metadata: Metadata = {
     locale: "cs_CZ",
     alternateLocale: "en_US",
     title: "Gym Spotter | Mapa a hledač fitek v Praze",
-    description: "Najdi nejlepší fitka a posilovny v Praze. Interaktivní mapa s aktuálními informacemi.",
+    description:
+      "Najdi nejlepší fitka a posilovny v Praze. Interaktivní mapa s aktuálními informacemi.",
     siteName: "Gym Spotter",
   },
   twitter: {
@@ -84,7 +97,10 @@ export default async function RootLayout({
     <html lang={locale} className="dark">
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
         <link rel="apple-touch-icon" href="/web-app-manifest-192x192.png" />
         <title>Gym Spotter | Mapa a hledač fitek v Praze</title>
       </head>
@@ -92,10 +108,8 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
-          <ConvexClientProvider>
-            {children}
-          </ConvexClientProvider>
-          <Toaster/>
+          <ConvexClientProvider>{children}</ConvexClientProvider>
+          <Toaster />
         </NextIntlClientProvider>
       </body>
     </html>
